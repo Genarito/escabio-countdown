@@ -25,6 +25,7 @@ class Escabio extends React.Component {
                 'Julia',
                 'El ema',
                 'Ruso',
+                'Nuno'
                 ]
         };
 
