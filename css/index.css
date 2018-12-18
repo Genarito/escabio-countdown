@@ -1,0 +1,15 @@
+#input-name {
+    margin-top: 5%;
+}
+
+.danger {
+    color: rgb(189, 37, 37);
+}
+
+#loser {
+    font-size: 15em;
+}
+
+#timer {
+    font-size: 10em;
+}
