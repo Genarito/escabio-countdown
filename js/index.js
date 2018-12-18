@@ -11,7 +11,7 @@ class Escabio extends React.Component {
         this.drinks = ['Fernet', 'Vodka'];
 
         this.state = {
-            countdown: 6,
+            countdown: 600,
             loserName: '',
             drink: '',
             names: [
