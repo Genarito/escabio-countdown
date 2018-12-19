@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Argentina style: when countdown reises 0 It shows a random name. That person have to make a shot. If refuses, all people at party have permission to hit him until dead.
+Argentina style: when countdown reaches 0 It shows a random name. That person have to make a shot. If refuses, all people at party have permission to hit him until dead.
 
 ## Usage
 
