@@ -11,7 +11,7 @@ class Escabio extends React.Component {
 
         this.drinks = ['Fernet', 'Vodka'];
         this.state = {
-            countdown: 10,
+            countdown: 600,
             loserName: '',
             drink: '',
             names: [
@@ -33,7 +33,7 @@ class Escabio extends React.Component {
         this.lightningNames = this.state.names.slice();
         this.shotRound= false;
         this.lightning = 0; 
-        this.common = 3; //for testing of lightningRound change this value to 3 and de countdown decrease to 10
+        this.common = 0; //for testing of lightningRound change this value to 3 and de countdown decrease to 10
         
         // Bind 'this' variable to methods which are called from view
         this.handleInput = this.handleInput.bind(this);
