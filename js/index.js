@@ -11,7 +11,7 @@ class Escabio extends React.Component {
 
         this.drinks = ['Fernet', 'Vodka'];
         this.state = {
-            countdown: 600,
+            countdown: 10,
             loserName: '',
             drink: '',
             names: [
@@ -31,9 +31,10 @@ class Escabio extends React.Component {
 
         // variables and array for the lightning round
         this.lightningNames = this.state.names.slice();
+        this.positionOut = new Array();
         this.shotRound= false;
         this.lightning = 0; 
-        this.common = 0; //for testing of lightningRound change this value to 3 and de countdown decrease to 10
+        this.common = 3; //for testing of lightningRound change this value to 3 and de countdown decrease to 10
         
         // Bind 'this' variable to methods which are called from view
         this.handleInput = this.handleInput.bind(this);
@@ -141,6 +142,9 @@ class Escabio extends React.Component {
     lightningRound(){
         let randomNameIndex = Math.floor(Math.random() * (this.lightningNames.length));
         let randomDrinkIndex = Math.floor(Math.random() * (this.drinks.length));
+        //check repeat names
+        if ()
+
         let getLoser = this.lightningNames[randomNameIndex];
         let countd = 3
         let aux = this.lightningNames.splice(randomNameIndex,1);
