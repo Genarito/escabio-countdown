@@ -1,9 +1,25 @@
 import React from 'react';
 import ReactDOM from "react-dom";
 
-import logo from '../lightning.gif'
+import logo from '../gifs/lightning.gif';
 import '../css/index.css';
 import '../bootstrap-3.3.7-dist/css/bootstrap.min.css';
+
+
+// function importAll(r) {
+//     return r.keys().map(r);
+//   }
+  
+// const images = importAll(require.context('../gifs', false, /\.(gif)$/));
+
+// //console.log(images);
+// function importAll(r) {
+//     let images = {};
+//     r.keys().map((item, index) => { images[item.replace('./', '')] = r(item); });
+//     return images;
+// }
+
+// const images = importAll(require.context('./images', false, '/\.png/'));
 
 class Escabio extends React.Component {
     constructor(props) {
@@ -31,25 +47,26 @@ class Escabio extends React.Component {
 
         // variables and array for the lightning round
         this.lightningNames = this.state.names.slice();
-        this.positionOut = new Array();
         this.shotRound= false;
-        this.lightning = 0; 
+        this.lightning = 0;
+        this.cantOfRounds = 5; 
         this.common = 3; //for testing of lightningRound change this value to 3 and de countdown decrease to 10
-        
         // Bind 'this' variable to methods which are called from view
         this.handleInput = this.handleInput.bind(this);
         this.add = this.add.bind(this);
+        //this.importAll= this.importAll.bind(this)
     }
 
     /**
      * Reduce a second every second
      */
+    
     componentDidMount() {
         setInterval(() => {
             this.decrease();
         }, 1000);
     }
-
+    
     /**
      * Handle changes on input
      * @param {Event} e Change event
@@ -58,7 +75,7 @@ class Escabio extends React.Component {
         // console.log(e);
         this.setState({ newName: e.target.value })
     }
-
+    
     /**
      * Add a name to the list
      */
@@ -70,7 +87,10 @@ class Escabio extends React.Component {
             newName: ''
         });
     }
-
+    importAll(r) {
+      return r.keys().map(r);
+    }
+    
     /**
      * Reduce countdown value by 1
      */
@@ -79,20 +99,20 @@ class Escabio extends React.Component {
             countdown: previousState.countdown - 1
         }));
     }
-
+    
     /**
      * Gets countdown content to show
      */
     generateCountdown() {
         let countdownDescripcion;
-
+        
         let divisor_for_minutes = this.state.countdown % (60 * 60);
         let minutes = Math.floor(divisor_for_minutes / 60);
-
+        
         let divisor_for_seconds = divisor_for_minutes % 60;
         let seconds = Math.ceil(divisor_for_seconds);
         seconds = (seconds < 10) ? '0' + seconds : seconds;
-
+        
         if (minutes) {
             countdownDescripcion = minutes + ':' + seconds + ' minutos';
         } else {
@@ -108,16 +128,16 @@ class Escabio extends React.Component {
                 this.shotRound=false;
             }
             else{
-                if(this.lightning < 4){
+                if(this.lightning < this.cantOfRounds){
                     this.lightningRound();
                     this.lightning = this.lightning + 1;
                 }
             }
         }    
-
+        
         return countdownDescripcion;
     }
-
+    
     /**
      * Select randomly a loser
      */
@@ -138,17 +158,18 @@ class Escabio extends React.Component {
             });
         }, 20000);
     }
-
+    
     lightningRound(){
-        let randomNameIndex = Math.floor(Math.random() * (this.lightningNames.length));
-        let randomDrinkIndex = Math.floor(Math.random() * (this.drinks.length));
-        //check repeat names
-        if ()
-
+        let randomNameIndex = Math.floor(Math.random() * (this.lightningNames.length));;
+        let randomDrinkIndex =  Math.floor(Math.random() * (this.drinks.length));
+        // in case of having passed all reload all the names
+        if(this.lightningNames.length == 1){
+            this.lightningNames= this.state.names.slice();
+        }
         let getLoser = this.lightningNames[randomNameIndex];
-        let countd = 3
-        let aux = this.lightningNames.splice(randomNameIndex,1);
-        if(this.lightning == 3 ){
+        let countd = 3 //time between rounds
+        this.lightningNames.splice(randomNameIndex,1); //delete the name for not repeat
+        if(this.lightning == (this.cantOfRounds-1) ){
             countd = 600;
             this.common = 0;
             this.lightning = 0;
@@ -167,9 +188,9 @@ class Escabio extends React.Component {
                 drink: ''
             });
         }, 20000);
-
+        
     }
-
+    
     render() {
         const namesList = this.state.names.map((name, idx) => idx < this.state.names.length - 1 ? name + ', ' : name);
         let image;
@@ -188,7 +209,7 @@ class Escabio extends React.Component {
             id_timer='timer';
             pera= 'en la pera con'
         }
-
+        
         return (
             <div>
                 {image}
@@ -215,12 +236,13 @@ class Escabio extends React.Component {
                 </div>
             </div>
 
-        );
-    }
+);
+}
 }
 
 // Renders the component
 ReactDOM.render(
     <Escabio />,
     document.getElementById('countdown')
-);
+    );
+    
