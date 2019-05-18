@@ -1,8 +1,14 @@
 import React from 'react';
 import ReactDOM from "react-dom";
 
+// Styles
 import '../css/index.css';
 import '../bootstrap-3.3.7-dist/css/bootstrap.min.css';
+
+// Losers' names
+import {losers} from './losers';
+
+const TIME = 20;
 
 class Escabio extends React.Component {
     constructor(props) {
@@ -11,22 +17,10 @@ class Escabio extends React.Component {
         this.drinks = ['Fernet', 'Vodka'];
 
         this.state = {
-            countdown: 600,
+            countdown: TIME,
             loserName: '',
             drink: '',
-            names: [
-                'Gena',
-                'Marquitox',
-                'Chiqui (puto)',
-                'Libu <3',
-                'Manu lobo',
-                'Nati Nat',
-                'Rocio Informatica',
-                'Julia',
-                'El ema',
-                'Ruso',
-                'Nuno'
-                ]
+            names: losers
         };
 
         // Bind 'this' variable to methods which are called from view
@@ -107,7 +101,7 @@ class Escabio extends React.Component {
         let randomDrinkIndex = Math.floor(Math.random() * (this.drinks.length));
         
         this.setState({
-            countdown: 600,
+            countdown: TIME,
             loserName: this.state.names[randomNameIndex],
             drink: this.drinks[randomDrinkIndex]
         });
