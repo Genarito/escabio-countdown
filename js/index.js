@@ -1,31 +1,49 @@
 import React from 'react';
 import ReactDOM from "react-dom";
 
+// Components
+import Sidebar from "react-sidebar";
+import ConfigPanel from './ConfigPanel.js';
+
 // Styles
 import '../css/index.css';
 import '../bootstrap-3.3.7-dist/css/bootstrap.min.css';
 
+// Imgs
+import logo from '../gifs/lightning.gif';
+// import amanecer from '../gifs/amanecer.gif'
+
 // Losers' names
 import {losers} from './losers';
 
-const TIME = 20;
+const COUNTDOWN_TIME = 600; // Countdown time in seconds (10 minutes)
+const MAX_COMMON_COUNT_UNTIL_LIGHTNING = 5; // Count common rounds until a lightning round
+const COUNT_LOOSERS_FOR_LIGTHNING_ROUND = 5; // Count for looser to show on every ligthning round
 
 class Escabio extends React.Component {
     constructor(props) {
         super(props);
 
         this.drinks = ['Fernet', 'Vodka'];
-
         this.state = {
-            countdown: TIME,
+            countdown: COUNTDOWN_TIME,
             loserName: '',
             drink: '',
-            names: losers
+            names: losers,
+            withBackgroundGradient: true,
+            showDrink: false,
+            sidebarOpen: false
         };
 
+        // Variables and array for the lightning round
+        this.lightningNames = this.state.names.slice();
+        this.lightning = 0;
+        this.commonRoundCurrentCount = 0; // For testing of lightningRound change this value to 3 and de countdown decrease to 10
+
         // Bind 'this' variable to methods which are called from view
-        this.handleInput = this.handleInput.bind(this);
-        this.add = this.add.bind(this);
+        this.addName = this.addName.bind(this);
+        this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
+        this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
     }
 
     /**
@@ -36,28 +54,20 @@ class Escabio extends React.Component {
             this.decrease();
         }, 1000);
     }
-
-    /**
-     * Handle changes on input
-     * @param {Event} e Change event
-     */
-    handleInput(e) {
-        // console.log(e);
-        this.setState({ newName: e.target.value })
-    }
-
+    
     /**
      * Add a name to the list
+     * @param {string} newName New name to add
      */
-    add() {
+    addName(newName) {
         let names = this.state.names;
-        names.push(this.state.newName);
+        names.push(newName);
         this.setState({
             names,
             newName: ''
         });
     }
-
+    
     /**
      * Reduce countdown value by 1
      */
@@ -68,44 +78,64 @@ class Escabio extends React.Component {
     }
 
     /**
+     * Toogle checkbox inputs' values
+     * @param {Event} e Checkbox change event
+     */
+    handleCheckboxChange(e) {
+        this.setState({[e.target.name]: e.target.checked});
+    }
+    
+    /**
      * Gets countdown content to show
      */
     generateCountdown() {
         let countdownDescripcion;
-
+        
         let divisor_for_minutes = this.state.countdown % (60 * 60);
         let minutes = Math.floor(divisor_for_minutes / 60);
-
+        
         let divisor_for_seconds = divisor_for_minutes % 60;
         let seconds = Math.ceil(divisor_for_seconds);
         seconds = (seconds < 10) ? '0' + seconds : seconds;
-
+        
         if (minutes) {
             countdownDescripcion = minutes + ':' + seconds + ' minutos';
         } else {
             countdownDescripcion = seconds + ' segundos';
         }
 
+        // It's time to drink!
         if (!minutes && seconds == '00') {
-            this.getLoser();
-        }
-
+            // Normal round
+            if (this.commonRoundCurrentCount < MAX_COMMON_COUNT_UNTIL_LIGHTNING) {
+                this.getLoser();
+                this.commonRoundCurrentCount++;
+            } else {
+                // Lightning round
+                if (this.lightning < COUNT_LOOSERS_FOR_LIGTHNING_ROUND) {
+                    this.lightningRound();
+                    this.lightning++;
+                }
+            }
+        }    
+        
         return countdownDescripcion;
     }
-
+    
     /**
-     * Select randomly a loser
+     * Select randomly a loser in a common (normal) round
      */
     getLoser() {
         let randomNameIndex = Math.floor(Math.random() * (this.state.names.length));
         let randomDrinkIndex = Math.floor(Math.random() * (this.drinks.length));
         
         this.setState({
-            countdown: TIME,
+            countdown: COUNTDOWN_TIME,
             loserName: this.state.names[randomNameIndex],
             drink: this.drinks[randomDrinkIndex]
         });
         
+        // Hides name in seconds
         setTimeout(() => {
             this.setState({
                 loserName: '',
@@ -113,33 +143,156 @@ class Escabio extends React.Component {
             });
         }, 20000);
     }
+    
+    /**
+     * Executes a ligthning round logic
+     */
+    lightningRound(){
+        let randomNameIndex = Math.floor(Math.random() * (this.lightningNames.length));;
+        let randomDrinkIndex =  Math.floor(Math.random() * (this.drinks.length));
+        // In case of having passed all reload all the names
+        if (this.lightningNames.length == 1){
+            this.lightningNames = this.state.names.slice();
+        }
 
-    render() {
-        const namesList = this.state.names.map((name, idx) => idx < this.state.names.length - 1 ? name + ', ' : name);
+        let getLoser = this.lightningNames[randomNameIndex];
+        let countd; // Time between rounds
+        this.lightningNames.splice(randomNameIndex, 1); // Deletes the name to not repeat
+
+        // Last lightning round
+        if (this.lightning == (COUNT_LOOSERS_FOR_LIGTHNING_ROUND - 1)) {
+            // Resets variables
+            countd = COUNTDOWN_TIME;
+            this.commonRoundCurrentCount = 0;
+            this.lightning = 0;
+            this.lightningNames = this.state.names.slice();
+
+            // Reset loser's name
+            setTimeout(() => {
+                this.setState({
+                    loserName: '',
+                    drink: ''
+                });
+            }, 20000);
+        } else {
+            countd = 3;
+        }
+
+        // Shows loser
+        this.setState({
+            countdown: countd,
+            loserName: getLoser,
+            drink: this.drinks[randomDrinkIndex]
+        });
+    }
+
+    /**
+     * Toggle sidebar's status
+     * @param {boolean} open New state for sidebar
+     */
+    onSetSidebarOpen(open) {
+        this.setState({ sidebarOpen: open });
+    }
+
+    /**
+     * Returns a random git for background
+     * TODO: implement
+     */
+    getRandomGif() {
+        return {};
+        // return {
+        //     backgroundImage: `url(${amanecer})`,
+        //     backgroundSize: 'cover'
+        // };
+    }
+
+    /**
+     * Checks if correspond to show a lightning round GIF as background
+     * NOTE: only shows the GIF in last 30 seconds
+     */
+    shouldShowLightningRoundBackground() {
+        return this.commonRoundCurrentCount >= MAX_COMMON_COUNT_UNTIL_LIGHTNING
+            && this.state.countdown <= 30;
+    }
+
+    /**
+     * Returns lightning round background img
+     */
+    getLigthningRoundImg() {
+        return {
+            backgroundImage: `url(${logo})`,
+            backgroundSize: 'cover'
+        };
+    }
+
+    getSpecialRoundDescription() {
+        if (!this.state.loserName && this.shouldShowLightningRoundBackground()) {
+            return 'Relámpago: fondean 5 personas!';
+        }
+
+        return null;
+    }
+    
+    render() {        
+        // Gets background img
+        const backgroundImage = this.shouldShowLightningRoundBackground() ? this.getLigthningRoundImg() : this.getRandomGif();
+        const classWithGradients = this.state.withBackgroundGradient ? 'with-backgroud-gradient' : '';
+
+        // If it's a special round, show description
+        const specialRoundDescription = this.getSpecialRoundDescription();
 
         return (
-            <div>
+            <div id="app-div" className={classWithGradients} style={backgroundImage}>
                 <div className="row">
-                    <div className="col-md-12 text-center">
+                    <div id="div-main-content" className={`col-md-12 text-center ${classWithGradients}`}>
                         <h1>Fondo en</h1>
                         <h1 id="timer">{this.generateCountdown()}</h1>
+
+                        {/* Special round description */}
+                        {specialRoundDescription &&
+                            <h1 id="special-round-description">{specialRoundDescription}</h1>
+                        }
+
+                        {/* Loser name */}
                         {this.state.loserName &&
-                            <h1 id="loser"><strong className="danger">{this.state.loserName}</strong> en la pera con <strong className="danger">{this.state.drink}</strong></h1>
+                            <h1 id="loser">
+                                {/* Victim */}
+                                <strong className="danger">{this.state.loserName}</strong>&nbsp;
+                                
+                                en la pera&nbsp;
+                                
+                                {/* Drink */}
+                                {this.state.showDrink &&
+                                    <span>
+                                        con&nbsp;
+                                        <strong className="danger">{this.state.drink}</strong>
+                                    </span>
+                                }
+                            </h1>
                         }
                     </div>
                 </div>
-                <div id="input-name" className="row">
-                    <div className="col-md-12 text-center">
-                        <input type="text" value={this.state.newName} onChange={this.handleInput}/>
-                        <button className="btn btn success" onClick={this.add}>Agregar</button>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-md-12 text-center">
-                        Nombres: 
-                        { namesList }
-                    </div>
-                </div>
+
+                {/* Sidebar with config panel */}
+                <Sidebar
+                    sidebar={
+                        <ConfigPanel
+                            names={this.state.names}
+                            addName={this.addName}
+                            withBackgroundGradient={this.state.withBackgroundGradient}
+                            showDrink={this.state.showDrink}
+                            handleCheckboxChange={this.handleCheckboxChange}
+                        />
+                    }
+                    touchHandleWidth={20}
+                    dragToggleDistance={30}
+                    open={this.state.sidebarOpen}
+                    onSetOpen={this.onSetSidebarOpen}
+                    styles={{ sidebar: { background: "white" } }}>
+                    <button type="button" className="btn btn-default" onClick={() => this.onSetSidebarOpen(true)}>
+                        <span id="config-button" className="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                    </button>
+                </Sidebar>
             </div>
         );
     }
@@ -150,3 +303,4 @@ ReactDOM.render(
     <Escabio />,
     document.getElementById('countdown')
 );
+    

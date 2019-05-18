@@ -1,7 +1,3 @@
-#input-name {
-    margin-top: 5%;
-}
-
 .danger {
     color: rgb(189, 37, 37);
 }
@@ -10,6 +6,78 @@
     font-size: 15em;
 }
 
-#timer {
-    font-size: 10em;
+#div-main-content.with-backgroud-gradient h1, #div-main-content.with-backgroud-gradient span {
+    color: white !important;
 }
+
+#div-main-content h1, #div-main-content span {
+    color: black !important;
+}
+
+#timer {
+    font-size: 9em;
+}
+
+#special-round-description {
+    font-size: 8em;
+    margin-top: 10%;
+}
+
+.image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+}
+
+span {
+    color: white;
+}
+
+html, body, #countdown, #app-div {
+    height: 100%; 
+}
+
+#config-button {
+    color: black;
+}
+
+#config-panel-div {
+    padding: 5%;
+    width: 300px;
+}
+
+#add-button {
+    margin-bottom: 5%;
+    margin-top: 2%;
+    width: 100%;
+}
+
+/* Gradient animation */
+@-webkit-keyframes BackgroundGradientAnimation {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@-moz-keyframes BackgroundGradientAnimation {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@keyframes BackgroundGradientAnimation {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+
+#app-div.with-backgroud-gradient {
+    background: linear-gradient(270deg, #1485b0, #1455b0);
+    background-size: 400% 400%;
+
+    -webkit-animation: BackgroundGradientAnimation 21s ease infinite;
+    -moz-animation: BackgroundGradientAnimation 21s ease infinite;
+    animation: BackgroundGradientAnimation 21s ease infinite;
+}
+
+/* End Gradient animation */
