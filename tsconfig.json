@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"jsx": "react",
+		"sourceMap": false,
+		"noImplicitAny": false,
+		"module": "commonjs",
+		"target": "es6",
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true
+	},
+	"exclude": [
+		"node_modules",
+		"webpack.*.js"
+	]
+}

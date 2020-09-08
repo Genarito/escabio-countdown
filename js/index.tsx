@@ -3,15 +3,16 @@ import ReactDOM from "react-dom";
 
 // Components
 import Sidebar from "react-sidebar";
-import ConfigPanel from './ConfigPanel.js';
+import { ConfigPanel } from './ConfigPanel';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 // Styles
 import '../css/index.css';
-import '../bootstrap-3.3.7-dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Imgs
 import logo from '../gifs/lightning.gif';
-// import amanecer from '../gifs/amanecer.gif'
 
 // Losers' names
 import {losers} from './losers';
@@ -20,7 +21,27 @@ const COUNTDOWN_TIME = 600; // Countdown time in seconds (10 minutes)
 const MAX_COMMON_COUNT_UNTIL_LIGHTNING = 5; // Count common rounds until a lightning round
 const COUNT_LOOSERS_FOR_LIGTHNING_ROUND = 5; // Count for looser to show on every ligthning round
 
-class Escabio extends React.Component {
+
+/**
+ * Component's props
+ */
+interface EscabioState {
+    countdown: number,
+    loserName: string,
+    newName: string,
+    drink: string,
+    names: string[],
+    withBackgroundGradient: boolean,
+    showDrink: boolean,
+    sidebarOpen: boolean
+}
+
+
+class Escabio extends React.Component<{}, EscabioState> {
+    private drinks: string[]
+    private lightningNames: string[]
+    private lightning: number
+    private commonRoundCurrentCount: number
     constructor(props) {
         super(props);
 
@@ -28,6 +49,7 @@ class Escabio extends React.Component {
         this.state = {
             countdown: COUNTDOWN_TIME,
             loserName: '',
+            newName: '',
             drink: '',
             names: losers,
             withBackgroundGradient: true,
@@ -82,7 +104,7 @@ class Escabio extends React.Component {
      * @param {Event} e Checkbox change event
      */
     handleCheckboxChange(e) {
-        this.setState({[e.target.name]: e.target.checked});
+        this.setState<never>({[e.target.name]: e.target.checked});
     }
     
     /**
@@ -96,16 +118,16 @@ class Escabio extends React.Component {
         
         let divisor_for_seconds = divisor_for_minutes % 60;
         let seconds = Math.ceil(divisor_for_seconds);
-        seconds = (seconds < 10) ? '0' + seconds : seconds;
+        const secondsString = (seconds < 10) ? '0' + seconds : seconds;
         
         if (minutes) {
-            countdownDescripcion = minutes + ':' + seconds + ' minutos';
+            countdownDescripcion = minutes + ':' + secondsString + ' minutos';
         } else {
-            countdownDescripcion = seconds + ' segundos';
+            countdownDescripcion = secondsString + ' segundos';
         }
 
         // It's time to drink!
-        if (!minutes && seconds == '00') {
+        if (!minutes && secondsString == '00') {
             // Normal round
             if (this.commonRoundCurrentCount < MAX_COMMON_COUNT_UNTIL_LIGHTNING) {
                 this.getLoser();
@@ -243,8 +265,8 @@ class Escabio extends React.Component {
 
         return (
             <div id="app-div" className={classWithGradients} style={backgroundImage}>
-                <div className="row">
-                    <div id="div-main-content" className={`col-md-12 text-center ${classWithGradients}`}>
+                <Row>
+                    <Col md={12} id="div-main-content" className={`text-center ${classWithGradients}`}>
                         <h1>Fondo en</h1>
                         <h1 id="timer">{this.generateCountdown()}</h1>
 
@@ -270,8 +292,8 @@ class Escabio extends React.Component {
                                 }
                             </h1>
                         }
-                    </div>
-                </div>
+                    </Col>
+                </Row>
 
                 {/* Sidebar with config panel */}
                 <Sidebar
