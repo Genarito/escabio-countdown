@@ -24,14 +24,14 @@ const COUNT_LOOSERS_FOR_LIGTHNING_ROUND = 5; // Count for looser to show on ever
 
 
 /**
- * Component's props
+ * Component's state
  */
 interface EscabioState {
     countdown: number,
     loserName: string,
-    newName: string,
     drink: string,
     names: string[],
+    drinks: string[],
     withBackgroundGradient: boolean,
     showDrink: boolean,
     sidebarOpen: boolean
@@ -41,21 +41,19 @@ interface EscabioState {
  * Renders main component
  */
 class Escabio extends React.Component<{}, EscabioState> {
-    private drinks: string[]
     private lightningNames: string[]
     private lightning: number
     private commonRoundCurrentCount: number
-    
+
     constructor(props) {
         super(props);
 
-        this.drinks = ['Fernet', 'Vodka'];
         this.state = {
             countdown: COUNTDOWN_TIME,
             loserName: '',
-            newName: '',
             drink: '',
             names: [],
+            drinks: [],
             withBackgroundGradient: true,
             showDrink: false,
             sidebarOpen: false
@@ -103,6 +101,7 @@ class Escabio extends React.Component<{}, EscabioState> {
     loadFromLocalStorage() {
         this.setState({
             names: this.parseOrDefault<string[]>('names', []),
+            drinks: this.parseOrDefault<string[]>('drinks', []),
             withBackgroundGradient: this.parseOrDefault('withBackgroundGradient', true),
             showDrink: this.parseOrDefault('showDrink', false),
         })
@@ -115,15 +114,12 @@ class Escabio extends React.Component<{}, EscabioState> {
     addName = (newName: string) => {
         let names = this.state.names;
         names.push(newName);
-        this.setState({
-            names,
-            newName: ''
-        }, this.saveStateInLocalStorage);
+        this.setState({ names }, this.saveStateInLocalStorage);
     }
 
     /**
      * Removes a specific name by index from the list name
-     * @param idx Index to remove from names arrar
+     * @param idx Index to remove from names array
      */
     removeName = (idx: number) => {
         const names = this.state.names
@@ -131,6 +127,28 @@ class Escabio extends React.Component<{}, EscabioState> {
             names.splice(idx, 1);
         }
         this.setState({ names }, this.saveStateInLocalStorage)
+    }
+
+    /**
+     * Add a drink to the list
+     * @param newDrink New drink to add
+     */
+    addDrink = (newDrink: string) => {
+        let drinks = this.state.drinks;
+        drinks.push(newDrink)
+        this.setState({ drinks }, this.saveStateInLocalStorage);
+    }
+
+    /**
+     * Removes a specific name by index from the list name
+     * @param idx Index to remove from drinks array
+     */
+    removeDrink = (idx: number) => {
+        const drinks = this.state.drinks
+        if (idx < drinks.length) {
+            drinks.splice(idx, 1);
+        }
+        this.setState({ drinks }, this.saveStateInLocalStorage)
     }
 
     /**
@@ -147,6 +165,7 @@ class Escabio extends React.Component<{}, EscabioState> {
      */
     saveStateInLocalStorage() {
         this.saveKeyAndValueInJSON('names', this.state.names)
+        this.saveKeyAndValueInJSON('drinks', this.state.drinks)
         this.saveKeyAndValueInJSON('withBackgroundGradient', this.state.withBackgroundGradient)
         this.saveKeyAndValueInJSON('showDrink', this.state.showDrink)
     }
@@ -210,12 +229,12 @@ class Escabio extends React.Component<{}, EscabioState> {
      */
     getLoser() {
         let randomNameIndex = Math.floor(Math.random() * (this.state.names.length));
-        let randomDrinkIndex = Math.floor(Math.random() * (this.drinks.length));
+        let randomDrinkIndex = Math.floor(Math.random() * (this.state.drinks.length));
         
         this.setState({
             countdown: COUNTDOWN_TIME,
             loserName: this.state.names[randomNameIndex],
-            drink: this.drinks[randomDrinkIndex]
+            drink: this.state.drinks[randomDrinkIndex]
         });
         
         // Hides name in seconds
@@ -232,7 +251,8 @@ class Escabio extends React.Component<{}, EscabioState> {
      */
     lightningRound(){
         let randomNameIndex = Math.floor(Math.random() * (this.lightningNames.length));;
-        let randomDrinkIndex =  Math.floor(Math.random() * (this.drinks.length));
+        let randomDrinkIndex =  Math.floor(Math.random() * (this.state.drinks.length));
+
         // In case of having passed all reload all the names
         if (this.lightningNames.length == 1){
             this.lightningNames = this.state.names.slice();
@@ -265,7 +285,7 @@ class Escabio extends React.Component<{}, EscabioState> {
         this.setState({
             countdown: countd,
             loserName: getLoser,
-            drink: this.drinks[randomDrinkIndex]
+            drink: this.state.drinks[randomDrinkIndex]
         });
     }
 
@@ -347,8 +367,11 @@ class Escabio extends React.Component<{}, EscabioState> {
                     sidebar={
                         <ConfigPanel
                             names={this.state.names}
+                            drinks={this.state.drinks}
                             addName={this.addName}
                             removeName={this.removeName}
+                            addDrink={this.addDrink}
+                            removeDrink={this.removeDrink}
                             withBackgroundGradient={this.state.withBackgroundGradient}
                             showDrink={this.state.showDrink}
                             handleCheckboxChange={this.handleCheckboxChange}

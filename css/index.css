@@ -65,8 +65,17 @@ html, body, #countdown, #app-div {
     color: #d40202;
 }
 
-#players-list-header {
+#items-list-header {
     margin-bottom: 0;
+}
+
+.items-list-component {
+    margin-top: 5%;
+}
+
+.items-list-group {
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 /* Gradient animation */
