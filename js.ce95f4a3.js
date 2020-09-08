@@ -32627,9 +32627,9 @@ var Button_1 = __importDefault(require("react-bootstrap/Button"));
 var ItemsList_1 = require("./ItemsList");
 
 exports.ConfigPanel = function (props) {
-  return react_1.default.createElement(Row_1.default, {
+  return react_1.default.createElement(react_1.default.Fragment, null, react_1.default.createElement("div", {
     id: "config-panel-div"
-  }, react_1.default.createElement(Col_1.default, {
+  }, react_1.default.createElement(Row_1.default, null, react_1.default.createElement(Col_1.default, {
     md: 12
   }, react_1.default.createElement("h4", null, "Opciones"), react_1.default.createElement(Form_1.default.Group, null, react_1.default.createElement(Form_1.default.Label, null, "Tiempo en minutos"), react_1.default.createElement(Form_1.default.Control, {
     type: "number",
@@ -32662,17 +32662,27 @@ exports.ConfigPanel = function (props) {
     name: "showDrink",
     checked: props.showDrink,
     onChange: props.handleCheckboxChange
-  }))), react_1.default.createElement(ItemsList_1.ItemsList, {
+  })))), react_1.default.createElement(Row_1.default, null, react_1.default.createElement(ItemsList_1.ItemsList, {
     headerDescription: "Jugadores",
     items: props.names,
     addItem: props.addName,
     removeItem: props.removeName
-  }), props.showDrink && react_1.default.createElement(ItemsList_1.ItemsList, {
+  })), props.showDrink && react_1.default.createElement(Row_1.default, null, react_1.default.createElement(ItemsList_1.ItemsList, {
     headerDescription: "Tragos",
     items: props.drinks,
     addItem: props.addDrink,
     removeItem: props.removeDrink
-  }));
+  }))), react_1.default.createElement("div", {
+    id: "made-with-love"
+  }, react_1.default.createElement(Col_1.default, {
+    md: 12,
+    className: "text-center"
+  }, "Made with ", react_1.default.createElement("span", {
+    className: "heart"
+  }, "\u2764"), " by ", react_1.default.createElement("a", {
+    href: "https://github.com/Genarito",
+    target: "_blank"
+  }, "Genarito"))));
 };
 },{"react":"node_modules/react/index.js","react-bootstrap/Row":"node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Form":"node_modules/react-bootstrap/esm/Form.js","react-bootstrap/Button":"node_modules/react-bootstrap/esm/Button.js","./ItemsList":"js/ItemsList.tsx"}],"node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
 var bundleURL = null;
@@ -33318,7 +33328,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42241" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "34281" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

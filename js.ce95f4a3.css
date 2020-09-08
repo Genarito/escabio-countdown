@@ -82,6 +82,10 @@ html, body, #countdown, #app-div {
     overflow-y: auto;
 }
 
+.heart {
+    color:#e25555;
+}
+
 /* Gradient animation */
 @-webkit-keyframes BackgroundGradientAnimation {
     0%{background-position:0% 50%}
