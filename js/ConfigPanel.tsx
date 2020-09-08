@@ -63,6 +63,7 @@ export const ConfigPanel = (props: ConfigPanelProps) => {
         <Row id="config-panel-div">
             {/* Checkbox options */}
             <Col md={12}>
+                <h4>Opciones</h4>
                 <Form>
                     <Form.Group>
                         {/* Background gradient */}
@@ -88,10 +89,11 @@ export const ConfigPanel = (props: ConfigPanelProps) => {
 
             {/* Input to add a new loser */}
             <Col md={12}>
-                <h4>Nombres</h4>
+                <h4>Jugadores</h4>
                 <input
                     type="text"
                     className="form-control"
+                    placeholder="Busca o agrega jugadores"
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
                     onKeyDown={handleKeyDown}

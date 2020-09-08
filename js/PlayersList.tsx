@@ -2,6 +2,7 @@ import React from 'react'
 
 // Components
 import ListGroup from 'react-bootstrap/ListGroup';
+import Badge from 'react-bootstrap/Badge';
 
 /**
  * Component's props
@@ -27,6 +28,11 @@ export const PlayersList = (props: PlayerListProps) => {
 
     return (
         <ListGroup>
+            <ListGroup.Item variant="dark">
+                <h6 id="players-list-header">
+                    Jugadores <Badge variant="secondary" className="float-right">{props.names.length}</Badge>
+                </h6>
+            </ListGroup.Item>
             {filteredNames.map((name, idx) => (
                 <ListGroup.Item key={name}>
                     {name}

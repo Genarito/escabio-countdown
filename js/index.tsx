@@ -37,12 +37,15 @@ interface EscabioState {
     sidebarOpen: boolean
 }
 
-
+/**
+ * Renders main component
+ */
 class Escabio extends React.Component<{}, EscabioState> {
     private drinks: string[]
     private lightningNames: string[]
     private lightning: number
     private commonRoundCurrentCount: number
+    
     constructor(props) {
         super(props);
 
@@ -273,18 +276,6 @@ class Escabio extends React.Component<{}, EscabioState> {
     onSetSidebarOpen = (sidebarOpen: boolean) => { this.setState({ sidebarOpen }); }
 
     /**
-     * Returns a random git for background
-     * TODO: implement
-     */
-    getRandomGif() {
-        return {};
-        // return {
-        //     backgroundImage: `url(${amanecer})`,
-        //     backgroundSize: 'cover'
-        // };
-    }
-
-    /**
      * Checks if correspond to show a lightning round GIF as background
      * NOTE: only shows the GIF in last 30 seconds
      */
@@ -313,7 +304,7 @@ class Escabio extends React.Component<{}, EscabioState> {
     
     render() {        
         // Gets background img
-        const backgroundImage = this.shouldShowLightningRoundBackground() ? this.getLigthningRoundImg() : this.getRandomGif();
+        const backgroundImage = this.shouldShowLightningRoundBackground() ? this.getLigthningRoundImg() : {};
         const classWithGradients = this.state.withBackgroundGradient ? 'with-backgroud-gradient' : '';
 
         // If it's a special round, show description

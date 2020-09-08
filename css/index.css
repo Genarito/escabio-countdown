@@ -65,6 +65,10 @@ html, body, #countdown, #app-div {
     color: #d40202;
 }
 
+#players-list-header {
+    margin-bottom: 0;
+}
+
 /* Gradient animation */
 @-webkit-keyframes BackgroundGradientAnimation {
     0%{background-position:0% 50%}
