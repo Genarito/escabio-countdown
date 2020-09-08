@@ -18,7 +18,8 @@ import '@fortawesome/fontawesome-free/css/all.css'
 // Imgs
 import logo from '../gifs/lightning.gif';
 
-const COUNTDOWN_TIME = 600; // Countdown time in seconds (10 minutes)
+
+const MILISECONDS_TO_HIDE_ELEMENTS = 15000 // Number of miliseconds to show the number of the loser untils it's cleaned
 const MAX_COMMON_COUNT_UNTIL_LIGHTNING = 5; // Count common rounds until a lightning round
 const COUNT_LOOSERS_FOR_LIGTHNING_ROUND = 5; // Count for looser to show on every ligthning round
 
@@ -28,12 +29,14 @@ const COUNT_LOOSERS_FOR_LIGTHNING_ROUND = 5; // Count for looser to show on ever
  */
 interface EscabioState {
     countdown: number,
+    newCountdown: number,
     loserName: string,
     drink: string,
     names: string[],
     drinks: string[],
     withBackgroundGradient: boolean,
     showDrink: boolean,
+    // lightningIsEnable: boolean, // TODO: implement
     sidebarOpen: boolean
 }
 
@@ -41,6 +44,7 @@ interface EscabioState {
  * Renders main component
  */
 class Escabio extends React.Component<{}, EscabioState> {
+    private defaultCoundown: number
     private lightningNames: string[]
     private lightning: number
     private commonRoundCurrentCount: number
@@ -48,8 +52,11 @@ class Escabio extends React.Component<{}, EscabioState> {
     constructor(props) {
         super(props);
 
+        this.defaultCoundown = 600
+
         this.state = {
-            countdown: COUNTDOWN_TIME,
+            countdown: this.defaultCoundown,
+            newCountdown: this.secondsToMinutes(this.defaultCoundown),
             loserName: '',
             drink: '',
             names: [],
@@ -96,10 +103,44 @@ class Escabio extends React.Component<{}, EscabioState> {
     }
 
     /**
+     * Handles changes in newCountdown state
+     * @param newCountdown New state vale
+     */
+    handleCountdownTimeChange = (newCountdown: number) => { this.setState({ newCountdown }) }
+
+    /**
+     * Transforms seconds to minutes
+     * @param seconds Seconds to transform as minutes
+     * @return Minutes
+     */
+    secondsToMinutes = (seconds: number): number => Math.ceil(seconds / 60)
+    
+    /**
+     * Transforms minutes to seconds
+     * @param minutes Minutes to transform as seconds
+     * @return Seconds
+     */
+    minutesToSeconds = (minutes: number): number => Math.ceil(minutes * 60)
+
+    /**
+     * Sets the new countdown time and restarts some states
+     */
+    setCountdownTime = () => {
+        const newCountdownInSeconds = this.minutesToSeconds(this.state.newCountdown)
+        this.setState({ countdown: newCountdownInSeconds }, this.saveStateInLocalStorage)
+        this.defaultCoundown = newCountdownInSeconds
+        this.lightning = 0
+    }
+
+    /**
      * Loads saved data from Local Storage
      */
     loadFromLocalStorage() {
+        const savedCountdownInSeconds = this.parseOrDefault('countdown', this.defaultCoundown)
+        this.defaultCoundown = savedCountdownInSeconds
         this.setState({
+            countdown: savedCountdownInSeconds,
+            newCountdown: this.secondsToMinutes(savedCountdownInSeconds),
             names: this.parseOrDefault<string[]>('names', []),
             drinks: this.parseOrDefault<string[]>('drinks', []),
             withBackgroundGradient: this.parseOrDefault('withBackgroundGradient', true),
@@ -164,6 +205,7 @@ class Escabio extends React.Component<{}, EscabioState> {
      * Saves all the use info state
      */
     saveStateInLocalStorage() {
+        this.saveKeyAndValueInJSON('countdown', this.state.countdown)
         this.saveKeyAndValueInJSON('names', this.state.names)
         this.saveKeyAndValueInJSON('drinks', this.state.drinks)
         this.saveKeyAndValueInJSON('withBackgroundGradient', this.state.withBackgroundGradient)
@@ -181,7 +223,7 @@ class Escabio extends React.Component<{}, EscabioState> {
 
     /**
      * Toogle checkbox inputs' values
-     * @param {Event} e Checkbox change event
+     * @param e Checkbox change event
      */
     handleCheckboxChange = (e) => {
         this.setState<never>({[e.target.name]: e.target.checked}, this.saveStateInLocalStorage);
@@ -232,18 +274,18 @@ class Escabio extends React.Component<{}, EscabioState> {
         let randomDrinkIndex = Math.floor(Math.random() * (this.state.drinks.length));
         
         this.setState({
-            countdown: COUNTDOWN_TIME,
+            countdown: this.defaultCoundown,
             loserName: this.state.names[randomNameIndex],
             drink: this.state.drinks[randomDrinkIndex]
         });
         
-        // Hides name in seconds
+        // Hides name in some seconds
         setTimeout(() => {
             this.setState({
                 loserName: '',
                 drink: ''
             });
-        }, 20000);
+        }, MILISECONDS_TO_HIDE_ELEMENTS);
     }
     
     /**
@@ -265,7 +307,7 @@ class Escabio extends React.Component<{}, EscabioState> {
         // Last lightning round
         if (this.lightning == (COUNT_LOOSERS_FOR_LIGTHNING_ROUND - 1)) {
             // Resets variables
-            countd = COUNTDOWN_TIME;
+            countd = this.defaultCoundown
             this.commonRoundCurrentCount = 0;
             this.lightning = 0;
             this.lightningNames = this.state.names.slice();
@@ -276,7 +318,7 @@ class Escabio extends React.Component<{}, EscabioState> {
                     loserName: '',
                     drink: ''
                 });
-            }, 20000);
+            }, MILISECONDS_TO_HIDE_ELEMENTS);
         } else {
             countd = 3;
         }
@@ -366,8 +408,11 @@ class Escabio extends React.Component<{}, EscabioState> {
                 <Sidebar
                     sidebar={
                         <ConfigPanel
+                            newCountdown={this.state.newCountdown}
                             names={this.state.names}
                             drinks={this.state.drinks}
+                            handleCountdownTimeChange={this.handleCountdownTimeChange}
+                            setCountdownTime={this.setCountdownTime}
                             addName={this.addName}
                             removeName={this.removeName}
                             addDrink={this.addDrink}

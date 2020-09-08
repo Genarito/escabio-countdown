@@ -57,6 +57,10 @@ html, body, #countdown, #app-div {
     max-width: 100%;
 }
 
+.margin-top-2 {
+    margin-top: 2% !important;
+}
+
 .clickable:hover {
     cursor: pointer !important;
 }
