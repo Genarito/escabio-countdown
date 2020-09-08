@@ -28,9 +28,9 @@ export const ConfigPanel = (props: ConfigPanelProps) => {
 
     /**
      * Check if can add a new name
-     * @return {boolean} True if can, false otherwise
+     * @return True if can, false otherwise
      */
-    function canAdd () { return newName.trim().length > 0 }
+    function canAdd (): boolean { return newName.trim().length > 0 }
 
     /**
      * Adds a new name to the list and cleans the input
@@ -56,8 +56,6 @@ export const ConfigPanel = (props: ConfigPanelProps) => {
             addNewName()
         }
     }
-
-    
 
     return (
         <Row id="config-panel-div">

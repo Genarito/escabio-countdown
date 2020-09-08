@@ -53,6 +53,10 @@ html, body, #countdown, #app-div {
     width: 100%;
 }
 
+#app-div > * {
+    max-width: 100%;
+}
+
 /* Gradient animation */
 @-webkit-keyframes BackgroundGradientAnimation {
     0%{background-position:0% 50%}
