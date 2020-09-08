@@ -39,74 +39,88 @@ interface ConfigPanelProps {
 
 export const ConfigPanel = (props: ConfigPanelProps) => {
     return (
-        <Row id="config-panel-div">
-            {/* Checkbox options */}
-            <Col md={12}>
-                <h4>Opciones</h4>
+        <React.Fragment>
+            <div id="config-panel-div">
+                <Row>
+                    {/* Checkbox options */}
+                    <Col md={12}>
+                        <h4>Opciones</h4>
 
-                {/* Countdown */}
-                <Form.Group>
-                    <Form.Label>Tiempo en minutos</Form.Label>
-                    <Form.Control
-                        type="number"
-                        min={1}
-                        value={props.newCountdown}
-                        onChange={(e) => {
-                            if (e.target.validity.valid) {
-                                const valueInteger: number = parseInt(e.target.value)
-                                if (!isNaN(valueInteger)) {
-                                    props.handleCountdownTimeChange(valueInteger)
-                                }
-                            }
-                        }}
+                        {/* Countdown */}
+                        <Form.Group>
+                            <Form.Label>Tiempo en minutos</Form.Label>
+                            <Form.Control
+                                type="number"
+                                min={1}
+                                value={props.newCountdown}
+                                onChange={(e) => {
+                                    if (e.target.validity.valid) {
+                                        const valueInteger: number = parseInt(e.target.value)
+                                        if (!isNaN(valueInteger)) {
+                                            props.handleCountdownTimeChange(valueInteger)
+                                        }
+                                    }
+                                }}
+                            />
+                            <Form.Text muted>
+                                El contador se reiniciará al guardar
+                            </Form.Text>
+
+                            <Button block className="margin-top-2" onClick={props.setCountdownTime}>
+                                Guardar
+                            </Button>
+                        </Form.Group>
+
+                        <Form.Group>
+                            {/* Background gradient */}
+                            <Form.Check
+                                type="checkbox"
+                                label="Fondo con gradientes"
+                                name="withBackgroundGradient"
+                                checked={props.withBackgroundGradient}
+                                onChange={props.handleCheckboxChange}
+                            />
+
+                            {/* Show drink when loses */}
+                            <Form.Check
+                                type="checkbox"
+                                label="Mostrar trago"
+                                name="showDrink"
+                                checked={props.showDrink}
+                                onChange={props.handleCheckboxChange}
+                            />
+                        </Form.Group>
+                    </Col>
+                </Row>
+                <Row>
+                    {/* Players */}
+                    <ItemsList
+                        headerDescription="Jugadores"
+                        items={props.names}
+                        addItem={props.addName}
+                        removeItem={props.removeName}
                     />
-                    <Form.Text muted>
-                        El contador se reiniciará al guardar
-                    </Form.Text>
+                </Row>
+                {/* Drinks */}
+                {props.showDrink &&
+                    <Row>
+                        <ItemsList
+                            headerDescription="Tragos"
+                            items={props.drinks}
+                            addItem={props.addDrink}
+                            removeItem={props.removeDrink}
+                        />
+                    </Row>
+                }
+            </div>
 
-                    <Button block className="margin-top-2" onClick={props.setCountdownTime}>
-                        Guardar
-                    </Button>
-                </Form.Group>
-
-                <Form.Group>
-                    {/* Background gradient */}
-                    <Form.Check
-                        type="checkbox"
-                        label="Fondo con gradientes"
-                        name="withBackgroundGradient"
-                        checked={props.withBackgroundGradient}
-                        onChange={props.handleCheckboxChange}
-                    />
-
-                    {/* Show drink when loses */}
-                    <Form.Check
-                        type="checkbox"
-                        label="Mostrar trago"
-                        name="showDrink"
-                        checked={props.showDrink}
-                        onChange={props.handleCheckboxChange}
-                    />
-                </Form.Group>
-            </Col>
-
-            {/* Players */}
-            <ItemsList
-                headerDescription="Jugadores"
-                items={props.names}
-                addItem={props.addName}
-                removeItem={props.removeName}
-            />
-
-            {/* Drinks */}
-            {props.showDrink &&
-                <ItemsList
-                    headerDescription="Tragos"
-                    items={props.drinks}
-                    addItem={props.addDrink}
-                    removeItem={props.removeDrink}
-                />
-            }
-        </Row>
+            <div id="made-with-love">
+                <Col md={12} className="text-center">
+                    Made with <span className="heart">❤</span> by <a href="https://github.com/Genarito" target="_blank">
+                        Genarito
+                    </a>
+                </Col>
+            </div>
+        </React.Fragment>
     )
 }
