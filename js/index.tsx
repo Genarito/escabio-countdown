@@ -6,10 +6,14 @@ import Sidebar from "react-sidebar";
 import { ConfigPanel } from './ConfigPanel';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 
 // Styles
 import '../css/index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+// Fontawesome
+import '@fortawesome/fontawesome-free/css/all.css'
 
 // Imgs
 import logo from '../gifs/lightning.gif';
@@ -311,9 +315,9 @@ class Escabio extends React.Component<{}, EscabioState> {
                     open={this.state.sidebarOpen}
                     onSetOpen={this.onSetSidebarOpen}
                     styles={{ sidebar: { background: "white" } }}>
-                    <button type="button" className="btn btn-default" onClick={() => this.onSetSidebarOpen(true)}>
-                        <span id="config-button" className="glyphicon glyphicon-cog" aria-hidden="true"></span>
-                    </button>
+                    <Button variant="light" onClick={() => this.onSetSidebarOpen(true)}>
+                        <i id="config-button" className="fas fa-cog"></i>
+                    </Button>
                 </Sidebar>
             </div>
         );

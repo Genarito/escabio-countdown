@@ -4,6 +4,8 @@ import React, { useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
+import { PlayersList } from './PlayersList'
 
 /**
  * Component's props
@@ -55,38 +57,33 @@ export const ConfigPanel = (props: ConfigPanelProps) => {
         }
     }
 
-    // Filter for searching when adding
-    const nameFilter = newName.trim().toLowerCase()
-    const names = props.names
-        .filter((name) => name.trim().toLowerCase().includes(nameFilter))
-        .map((name) => {
-            return (
-                <li key={name} className="list-group-item">{name}</li>
-            )
-        })
+    
 
     return (
         <Row id="config-panel-div">
             {/* Checkbox options */}
             <Col md={12}>
-                <div className="checkbox">
-                    {/* Background gradient */}
-                    <label>
-                        <input type="checkbox"
+                <Form>
+                    <Form.Group>
+                        {/* Background gradient */}
+                        <Form.Check
+                            type="checkbox"
+                            label="Fondo con gradientes"
                             name="withBackgroundGradient"
                             checked={props.withBackgroundGradient}
-                            onChange={props.handleCheckboxChange} />Fondo con gradientes
-                    </label>
+                            onChange={props.handleCheckboxChange}
+                        />
 
-
-                    {/* Show drink when loses */}
-                    <label>
-                        <input type="checkbox"
+                        {/* Show drink when loses */}
+                        <Form.Check
+                            type="checkbox"
+                            label="Mostrar trago"
                             name="showDrink"
                             checked={props.showDrink}
-                            onChange={props.handleCheckboxChange} />Mostrar trago
-                    </label>
-                </div>
+                            onChange={props.handleCheckboxChange}
+                        />
+                    </Form.Group>
+                </Form>
             </Col>
 
             {/* Input to add a new loser */}
@@ -110,9 +107,7 @@ export const ConfigPanel = (props: ConfigPanelProps) => {
 
             {/* Losers' names list */}
             <Col md={12}>
-                <ul className="list-group">
-                    {names}
-                </ul>
+                <PlayersList newName={newName} names={props.names}/>
             </Col>
         </Row>
     )
