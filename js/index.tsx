@@ -62,11 +62,6 @@ class Escabio extends React.Component<{}, EscabioState> {
         this.lightningNames = this.state.names.slice();
         this.lightning = 0;
         this.commonRoundCurrentCount = 0; // For testing of lightningRound change this value to 3 and de countdown decrease to 10
-
-        // Bind 'this' variable to methods which are called from view
-        this.addName = this.addName.bind(this);
-        this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
-        this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
     }
 
     /**
@@ -112,15 +107,27 @@ class Escabio extends React.Component<{}, EscabioState> {
     
     /**
      * Add a name to the list
-     * @param {string} newName New name to add
+     * @param newName New name to add
      */
-    addName(newName) {
+    addName = (newName: string) => {
         let names = this.state.names;
         names.push(newName);
         this.setState({
             names,
             newName: ''
         }, this.saveStateInLocalStorage);
+    }
+
+    /**
+     * Removes a specific name by index from the list name
+     * @param idx Index to remove from names arrar
+     */
+    removeName = (idx: number) => {
+        const names = this.state.names
+        if (idx < names.length) {
+            names.splice(idx, 1);
+        }
+        this.setState({ names }, this.saveStateInLocalStorage)
     }
 
     /**
@@ -154,7 +161,7 @@ class Escabio extends React.Component<{}, EscabioState> {
      * Toogle checkbox inputs' values
      * @param {Event} e Checkbox change event
      */
-    handleCheckboxChange(e) {
+    handleCheckboxChange = (e) => {
         this.setState<never>({[e.target.name]: e.target.checked}, this.saveStateInLocalStorage);
     }
     
@@ -261,11 +268,9 @@ class Escabio extends React.Component<{}, EscabioState> {
 
     /**
      * Toggle sidebar's status
-     * @param {boolean} open New state for sidebar
+     * @param sidebarOpen New state for sidebar
      */
-    onSetSidebarOpen(open) {
-        this.setState({ sidebarOpen: open });
-    }
+    onSetSidebarOpen = (sidebarOpen: boolean) => { this.setState({ sidebarOpen }); }
 
     /**
      * Returns a random git for background
@@ -352,6 +357,7 @@ class Escabio extends React.Component<{}, EscabioState> {
                         <ConfigPanel
                             names={this.state.names}
                             addName={this.addName}
+                            removeName={this.removeName}
                             withBackgroundGradient={this.state.withBackgroundGradient}
                             showDrink={this.state.showDrink}
                             handleCheckboxChange={this.handleCheckboxChange}

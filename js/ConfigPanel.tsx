@@ -20,7 +20,9 @@ interface ConfigPanelProps {
     /** Callback to add a new name to the player's list */
     addName: (newName: string) => void,
     /** Callback to handle checkboxes changes */
-    handleCheckboxChange: (e: any) => void
+    handleCheckboxChange: (e: any) => void,
+    /** Callback to remove a specific player's name from the list */
+    removeName: (idx: number) => void
 }
 
 export const ConfigPanel = (props: ConfigPanelProps) => {
@@ -105,7 +107,7 @@ export const ConfigPanel = (props: ConfigPanelProps) => {
 
             {/* Losers' names list */}
             <Col md={12}>
-                <PlayersList newName={newName} names={props.names}/>
+                <PlayersList newName={newName} names={props.names} removeName={props.removeName}/>
             </Col>
         </Row>
     )

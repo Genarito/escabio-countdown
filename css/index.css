@@ -57,6 +57,14 @@ html, body, #countdown, #app-div {
     max-width: 100%;
 }
 
+.clickable:hover {
+    cursor: pointer !important;
+}
+
+.delete-name-icon {
+    color: #d40202;
+}
+
 /* Gradient animation */
 @-webkit-keyframes BackgroundGradientAnimation {
     0%{background-position:0% 50%}
