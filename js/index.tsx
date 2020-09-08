@@ -18,9 +18,6 @@ import '@fortawesome/fontawesome-free/css/all.css'
 // Imgs
 import logo from '../gifs/lightning.gif';
 
-// Losers' names
-import {losers} from './losers';
-
 const COUNTDOWN_TIME = 600; // Countdown time in seconds (10 minutes)
 const MAX_COMMON_COUNT_UNTIL_LIGHTNING = 5; // Count common rounds until a lightning round
 const COUNT_LOOSERS_FOR_LIGTHNING_ROUND = 5; // Count for looser to show on every ligthning round
@@ -55,7 +52,7 @@ class Escabio extends React.Component<{}, EscabioState> {
             loserName: '',
             newName: '',
             drink: '',
-            names: losers,
+            names: [],
             withBackgroundGradient: true,
             showDrink: false,
             sidebarOpen: false
@@ -76,9 +73,41 @@ class Escabio extends React.Component<{}, EscabioState> {
      * Reduce a second every second
      */
     componentDidMount() {
+        // Loads saved info
+        this.loadFromLocalStorage()
+
         setInterval(() => {
             this.decrease();
         }, 1000);
+    }
+
+    /**
+     * Gets a key from Local Storage and parses it in JSON format
+     * @param key Key to retrieve from Local Storage
+     * @param defaultValue Default value to return in case error o key doesn't exist
+     * @returns Value stored in Local Storage or the default value
+     */
+    parseOrDefault<T>(key: string, defaultValue: T): T {
+        let res: T
+        try {
+            const dataRetrieved = window.localStorage.getItem(key)
+            res = dataRetrieved ? JSON.parse(dataRetrieved) : defaultValue
+        } catch {
+            res = defaultValue
+        }
+        
+        return res
+    }
+
+    /**
+     * Loads saved data from Local Storage
+     */
+    loadFromLocalStorage() {
+        this.setState({
+            names: this.parseOrDefault<string[]>('names', []),
+            withBackgroundGradient: this.parseOrDefault('withBackgroundGradient', true),
+            showDrink: this.parseOrDefault('showDrink', false),
+        })
     }
     
     /**
@@ -91,7 +120,25 @@ class Escabio extends React.Component<{}, EscabioState> {
         this.setState({
             names,
             newName: ''
-        });
+        }, this.saveStateInLocalStorage);
+    }
+
+    /**
+     * Save key and value in Local Storage
+     * @param key Key to store
+     * @param value Value to store
+     */
+    saveKeyAndValueInJSON(key: string, value) {
+        window.localStorage.setItem(key, JSON.stringify(value))
+    }
+
+    /**
+     * Saves all the use info state
+     */
+    saveStateInLocalStorage() {
+        this.saveKeyAndValueInJSON('names', this.state.names)
+        this.saveKeyAndValueInJSON('withBackgroundGradient', this.state.withBackgroundGradient)
+        this.saveKeyAndValueInJSON('showDrink', this.state.showDrink)
     }
     
     /**
@@ -108,7 +155,7 @@ class Escabio extends React.Component<{}, EscabioState> {
      * @param {Event} e Checkbox change event
      */
     handleCheckboxChange(e) {
-        this.setState<never>({[e.target.name]: e.target.checked});
+        this.setState<never>({[e.target.name]: e.target.checked}, this.saveStateInLocalStorage);
     }
     
     /**
