@@ -7,6 +7,9 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { ItemsList } from './ItemsList'
 
+/** All possible types of background */
+type BackgroundType = 'blank' | 'gradient' | 'video'
+
 /**
  * Component's props
  */
@@ -17,8 +20,10 @@ interface ConfigPanelProps {
     names: string[],
     /** List of drinks */
     drinks: string[],
-    /** Boolean to show "Background gradient" option's value */
-    withBackgroundGradient: boolean,
+    /** Background option's value */
+    background: BackgroundType,
+    /** Boolean to enable "Lightning round" option's value */
+    enableLightningRound: boolean,
     /** Boolean to show "Show drink" option's value */    
     showDrink: boolean
     /** Callback to handle countdown time changes */
@@ -37,7 +42,7 @@ interface ConfigPanelProps {
     removeDrink: (idx: number) => void
 }
 
-export const ConfigPanel = (props: ConfigPanelProps) => {
+const ConfigPanel = (props: ConfigPanelProps) => {
     return (
         <React.Fragment>
             <div id="config-panel-div">
@@ -72,12 +77,40 @@ export const ConfigPanel = (props: ConfigPanelProps) => {
                         </Form.Group>
 
                         <Form.Group>
-                            {/* Background gradient */}
+                            {/* Background styles */}
+                            <Form.Check
+                                type="radio"
+                                label="Fondo blanco"
+                                name="background"
+                                value='blank'
+                                checked={props.background === 'blank'}
+                                onChange={props.handleCheckboxChange}
+                            />
+                            
+                            <Form.Check
+                                type="radio"
+                                label="Fondo con gradientes"
+                                name="background"
+                                value='gradient'
+                                checked={props.background === 'gradient'}
+                                onChange={props.handleCheckboxChange}
+                            />
+
+                            <Form.Check
+                                type="radio"
+                                label="Fondo con video"
+                                name="background"
+                                value='video'
+                                checked={props.background === 'video'}
+                                onChange={props.handleCheckboxChange}
+                            />
+
+                            {/* Lightning Round */}
                             <Form.Check
                                 type="checkbox"
-                                label="Fondo con gradientes"
-                                name="withBackgroundGradient"
-                                checked={props.withBackgroundGradient}
+                                label="Ronda relámpago (toman varios)"
+                                name="enableLightningRound"
+                                checked={props.enableLightningRound}
                                 onChange={props.handleCheckboxChange}
                             />
 
@@ -124,3 +157,5 @@ export const ConfigPanel = (props: ConfigPanelProps) => {
         </React.Fragment>
     )
 }
+
+export { ConfigPanel, BackgroundType }

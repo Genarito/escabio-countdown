@@ -3,19 +3,69 @@
 }
 
 #loser {
-    font-size: 15em;
+    font-size: 13em;
 }
 
-#div-main-content.with-backgroud-gradient h1, #div-main-content.with-backgroud-gradient span {
+#div-main-content.with-background-gradient h1,
+#div-main-content.lightning-round,
+#div-main-content.with-background-gradient span {
     color: white !important;
 }
 
-#div-main-content h1, #div-main-content span {
+#div-main-content span {
     color: black !important;
 }
 
+#drink-label {
+    font-size: 7em;
+}
+
+/* Neon styles */
+#div-main-content.with-background-video h1 {
+    color: #fff;
+    text-shadow: 0 0 7px #fff,
+    0 0 10px #fff,
+    0 0 21px #fff,
+    0 0 42px #5271ff,
+    0 0 82px #5271ff,
+    0 0 92px #5271ff,
+    0 0 102px #5271ff,
+    0 0 151px #5271ff;
+    animation: pulsate 0.11s ease-in-out infinite alternate;
+    font-family: "Yellowtail",
+    sans-serif;
+}
+
+@keyframes pulsate {
+    100% {
+        text-shadow:
+            0 0 4px #fff,
+            0 0 11px #fff,
+            0 0 19px #fff,
+            0 0 40px #5271ff,
+            0 0 80px #5271ff,
+            0 0 90px #5271ff,
+            0 0 100px #5271ff,
+            0 0 150px #5271ff;
+    }
+
+    0% {
+        text-shadow:
+            0 0 4px #fff,
+            0 0 10px #fff,
+            0 0 18px #fff,
+            0 0 38px #5271ff,
+            0 0 73px #5271ff,
+            0 0 80px #5271ff,
+            0 0 94px #5271ff,
+            0 0 140px #5271ff;
+    }
+}
+
+/* End Neon styles */
+
 #timer {
-    font-size: 9em;
+    font-size: 12em;
 }
 
 #special-round-description {
@@ -104,7 +154,7 @@ html, body, #countdown, #app-div {
 }
 
 
-#app-div.with-backgroud-gradient {
+#app-div.with-background-gradient {
     background: linear-gradient(270deg, #1485b0, #1455b0);
     background-size: 400% 400%;
 
@@ -114,3 +164,17 @@ html, body, #countdown, #app-div {
 }
 
 /* End Gradient animation */
+
+#background-video {
+    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+    bottom: 0;
+    filter: grayscale(100%);
+    height: 100vh;
+    left: 0;
+    object-fit: cover;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 100vw;
+    z-index: 0;
+}

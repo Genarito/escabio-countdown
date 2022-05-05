@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 
 // Components
 import Sidebar from "react-sidebar";
-import { ConfigPanel } from './ConfigPanel';
+import { BackgroundType, ConfigPanel } from './ConfigPanel';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
@@ -17,11 +17,12 @@ import '@fortawesome/fontawesome-free/css/all.css'
 
 // Imgs
 import logo from '../gifs/lightning.gif';
+import video from '../videos/party_bitrate_medium.mp4';
 
 
-const MILISECONDS_TO_HIDE_ELEMENTS = 15000 // Number of miliseconds to show the number of the loser untils it's cleaned
+const MILISECONDS_TO_HIDE_ELEMENTS = 15000 // Number of milliseconds to show the number of the loser until it's cleaned
 const MAX_COMMON_COUNT_UNTIL_LIGHTNING = 5; // Count common rounds until a lightning round
-const COUNT_LOOSERS_FOR_LIGTHNING_ROUND = 5; // Count for looser to show on every ligthning round
+const COUNT_LOOSERS_FOR_LIGTHNING_ROUND = 5; // Count for looser to show on every lightning round
 
 
 /**
@@ -34,9 +35,9 @@ interface EscabioState {
     drink: string,
     names: string[],
     drinks: string[],
-    withBackgroundGradient: boolean,
+    background: BackgroundType,
+    enableLightningRound: boolean,
     showDrink: boolean,
-    // lightningIsEnable: boolean, // TODO: implement
     sidebarOpen: boolean
 }
 
@@ -61,13 +62,14 @@ class Escabio extends React.Component<{}, EscabioState> {
             drink: '',
             names: [],
             drinks: [],
-            withBackgroundGradient: true,
+            background: 'video',
+            enableLightningRound: true,
             showDrink: false,
             sidebarOpen: false
         };
 
         // Variables and array for the lightning round
-        this.lightningNames = this.state.names.slice();
+        this.lightningNames = [];
         this.lightning = 0;
         this.commonRoundCurrentCount = 0; // For testing of lightningRound change this value to 3 and de countdown decrease to 10
     }
@@ -143,9 +145,21 @@ class Escabio extends React.Component<{}, EscabioState> {
             newCountdown: this.secondsToMinutes(savedCountdownInSeconds),
             names: this.parseOrDefault<string[]>('names', []),
             drinks: this.parseOrDefault<string[]>('drinks', []),
-            withBackgroundGradient: this.parseOrDefault('withBackgroundGradient', true),
+            background: this.parseOrDefault('background', 'video'),
+            enableLightningRound: this.parseOrDefault('enableLightningRound', true),
             showDrink: this.parseOrDefault('showDrink', false),
-        })
+        }, this.updateLightningNames) // Updates names to prevent empty output on first lightning round
+    }
+
+    /** Updates lightningNames variable */
+    updateLightningNames = () => {
+        this.lightningNames = this.state.names.slice()
+    }
+
+    /** Saves all variables in localStorage and updates lightning names */
+    saveStorageAndUpdateLightningNames = () => {
+        this.updateLightningNames()
+        this.saveStateInLocalStorage()
     }
     
     /**
@@ -155,7 +169,7 @@ class Escabio extends React.Component<{}, EscabioState> {
     addName = (newName: string) => {
         let names = this.state.names;
         names.push(newName);
-        this.setState({ names }, this.saveStateInLocalStorage);
+        this.setState({ names }, this.saveStorageAndUpdateLightningNames);
     }
 
     /**
@@ -167,7 +181,7 @@ class Escabio extends React.Component<{}, EscabioState> {
         if (idx < names.length) {
             names.splice(idx, 1);
         }
-        this.setState({ names }, this.saveStateInLocalStorage)
+        this.setState({ names }, this.saveStorageAndUpdateLightningNames)
     }
 
     /**
@@ -208,7 +222,8 @@ class Escabio extends React.Component<{}, EscabioState> {
         this.saveKeyAndValueInJSON('countdown', this.state.countdown)
         this.saveKeyAndValueInJSON('names', this.state.names)
         this.saveKeyAndValueInJSON('drinks', this.state.drinks)
-        this.saveKeyAndValueInJSON('withBackgroundGradient', this.state.withBackgroundGradient)
+        this.saveKeyAndValueInJSON('background', this.state.background)
+        this.saveKeyAndValueInJSON('enableLightningRound', this.state.enableLightningRound)
         this.saveKeyAndValueInJSON('showDrink', this.state.showDrink)
     }
     
@@ -226,7 +241,8 @@ class Escabio extends React.Component<{}, EscabioState> {
      * @param e Checkbox change event
      */
     handleCheckboxChange = (e) => {
-        this.setState<never>({[e.target.name]: e.target.checked}, this.saveStateInLocalStorage);
+        const newValue = e.target.type ? e.target.value : e.target.checked
+        this.setState<never>({[e.target.name]: newValue}, this.saveStateInLocalStorage);
     }
     
     /**
@@ -300,17 +316,17 @@ class Escabio extends React.Component<{}, EscabioState> {
             this.lightningNames = this.state.names.slice();
         }
 
-        let getLoser = this.lightningNames[randomNameIndex];
+        let loserName = this.lightningNames[randomNameIndex];
         let countd; // Time between rounds
         this.lightningNames.splice(randomNameIndex, 1); // Deletes the name to not repeat
 
         // Last lightning round
-        if (this.lightning == (COUNT_LOOSERS_FOR_LIGTHNING_ROUND - 1)) {
+        if (this.lightning === (COUNT_LOOSERS_FOR_LIGTHNING_ROUND - 1)) {
             // Resets variables
             countd = this.defaultCoundown
             this.commonRoundCurrentCount = 0;
             this.lightning = 0;
-            this.lightningNames = this.state.names.slice();
+            this.updateLightningNames()
 
             // Reset loser's name
             setTimeout(() => {
@@ -326,7 +342,7 @@ class Escabio extends React.Component<{}, EscabioState> {
         // Shows loser
         this.setState({
             countdown: countd,
-            loserName: getLoser,
+            loserName: loserName,
             drink: this.state.drinks[randomDrinkIndex]
         });
     }
@@ -342,7 +358,8 @@ class Escabio extends React.Component<{}, EscabioState> {
      * NOTE: only shows the GIF in last 30 seconds
      */
     shouldShowLightningRoundBackground() {
-        return this.commonRoundCurrentCount >= MAX_COMMON_COUNT_UNTIL_LIGHTNING
+        return this.state.enableLightningRound
+            && this.commonRoundCurrentCount >= MAX_COMMON_COUNT_UNTIL_LIGHTNING
             && this.state.countdown <= 30;
     }
 
@@ -366,17 +383,39 @@ class Escabio extends React.Component<{}, EscabioState> {
     
     render() {        
         // Gets background img
-        const backgroundImage = this.shouldShowLightningRoundBackground() ? this.getLigthningRoundImg() : {};
-        const classWithGradients = this.state.withBackgroundGradient ? 'with-backgroud-gradient' : '';
+        const isLightningRound = this.shouldShowLightningRoundBackground()
+        const backgroundImage = isLightningRound ? this.getLigthningRoundImg() : {};
+        let divClass: string
+        switch (this.state.background) {
+            case 'gradient':
+                divClass = 'with-background-gradient'
+                break
+            case 'video':
+                divClass = 'with-background-video'
+                break
+            default:
+                divClass = ''
+                break
+        }
+
+        if (isLightningRound) {
+            divClass += ' lightning-round'
+        }
 
         // If it's a special round, show description
         const specialRoundDescription = this.getSpecialRoundDescription();
 
         return (
-            <div id="app-div" className={classWithGradients} style={backgroundImage}>
+            <div id="app-div" className={divClass} style={backgroundImage}>
+                {this.state.background === 'video' &&
+                    <video id="background-video" autoPlay loop muted disablePictureInPicture hidden={isLightningRound}>
+                        <source src={video} type="video/mp4" />
+                    </video>
+                }
+
                 <Row>
-                    <Col md={12} id="div-main-content" className={`text-center ${classWithGradients}`}>
-                        <h1>Fondo en</h1>
+                    <Col md={12} id="div-main-content" className={`text-center ${divClass}`}>
+                        <h1 id="drink-label">Fondo en</h1>
                         <h1 id="timer">{this.generateCountdown()}</h1>
 
                         {/* Special round description */}
@@ -388,16 +427,14 @@ class Escabio extends React.Component<{}, EscabioState> {
                         {this.state.loserName &&
                             <h1 id="loser">
                                 {/* Victim */}
-                                <strong className="danger">{this.state.loserName}</strong>&nbsp;
-                                
-                                en la pera&nbsp;
+                                <strong className="danger">{this.state.loserName}</strong> en la pera&nbsp;
                                 
                                 {/* Drink */}
                                 {this.state.showDrink &&
-                                    <span>
+                                    <>
                                         con&nbsp;
                                         <strong className="danger">{this.state.drink}</strong>
-                                    </span>
+                                    </>
                                 }
                             </h1>
                         }
@@ -417,7 +454,8 @@ class Escabio extends React.Component<{}, EscabioState> {
                             removeName={this.removeName}
                             addDrink={this.addDrink}
                             removeDrink={this.removeDrink}
-                            withBackgroundGradient={this.state.withBackgroundGradient}
+                            background={this.state.background}
+                            enableLightningRound={this.state.enableLightningRound}
                             showDrink={this.state.showDrink}
                             handleCheckboxChange={this.handleCheckboxChange}
                         />
