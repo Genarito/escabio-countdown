@@ -6,9 +6,9 @@
     font-size: 13em;
 }
 
-#div-main-content.with-background-gradient h1,
+#div-main-content.with-background-wall h1,
 #div-main-content.lightning-round,
-#div-main-content.with-background-gradient span {
+#div-main-content.with-background-wall span {
     color: white !important;
 }
 
@@ -21,7 +21,8 @@
 }
 
 /* Neon styles */
-#div-main-content.with-background-video h1 {
+#div-main-content.with-background-video h1, 
+#div-main-content.with-background-wall h1 {
     color: #fff;
     text-shadow: 0 0 7px #fff,
     0 0 10px #fff,
@@ -135,35 +136,6 @@ html, body, #countdown, #app-div {
 .heart {
     color:#e25555;
 }
-
-/* Gradient animation */
-@-webkit-keyframes BackgroundGradientAnimation {
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
-}
-@-moz-keyframes BackgroundGradientAnimation {
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
-}
-@keyframes BackgroundGradientAnimation {
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
-}
-
-
-#app-div.with-background-gradient {
-    background: linear-gradient(270deg, #1485b0, #1455b0);
-    background-size: 400% 400%;
-
-    -webkit-animation: BackgroundGradientAnimation 21s ease infinite;
-    -moz-animation: BackgroundGradientAnimation 21s ease infinite;
-    animation: BackgroundGradientAnimation 21s ease infinite;
-}
-
-/* End Gradient animation */
 
 #background-video {
     -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */

@@ -17,7 +17,8 @@ import '@fortawesome/fontawesome-free/css/all.css'
 
 // Imgs
 import logo from '../gifs/lightning.gif';
-import video from '../videos/party_bitrate_medium.mp4';
+import wall from '../imgs/wall.png'
+import video from '../videos/party.mp4';
 
 
 const MILISECONDS_TO_HIDE_ELEMENTS = 15000 // Number of milliseconds to show the number of the loser until it's cleaned
@@ -366,7 +367,7 @@ class Escabio extends React.Component<{}, EscabioState> {
     /**
      * Returns lightning round background img
      */
-    getLigthningRoundImg() {
+    getLightningRoundImg() {
         return {
             backgroundImage: `url(${logo})`,
             backgroundSize: 'cover'
@@ -384,11 +385,24 @@ class Escabio extends React.Component<{}, EscabioState> {
     render() {        
         // Gets background img
         const isLightningRound = this.shouldShowLightningRoundBackground()
-        const backgroundImage = isLightningRound ? this.getLigthningRoundImg() : {};
+        let backgroundImage 
+        if (isLightningRound) {
+            backgroundImage = this.getLightningRoundImg()
+        } else {
+            if (this.state.background === 'wall') {
+                backgroundImage = {
+                    backgroundImage: `url(${wall})`,
+                    backgroundSize: 'cover'
+                }
+            } else {
+                backgroundImage = {}
+            }
+        }
+        
         let divClass: string
         switch (this.state.background) {
-            case 'gradient':
-                divClass = 'with-background-gradient'
+            case 'wall':
+                divClass = 'with-background-wall'
                 break
             case 'video':
                 divClass = 'with-background-video'

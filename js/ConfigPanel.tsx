@@ -8,7 +8,7 @@ import Button from 'react-bootstrap/Button';
 import { ItemsList } from './ItemsList'
 
 /** All possible types of background */
-type BackgroundType = 'blank' | 'gradient' | 'video'
+type BackgroundType = 'blank' | 'wall' | 'video'
 
 /**
  * Component's props
@@ -89,10 +89,10 @@ const ConfigPanel = (props: ConfigPanelProps) => {
                             
                             <Form.Check
                                 type="radio"
-                                label="Fondo con gradientes"
+                                label="Fondo con imagen"
                                 name="background"
-                                value='gradient'
-                                checked={props.background === 'gradient'}
+                                value='wall'
+                                checked={props.background === 'wall'}
                                 onChange={props.handleCheckboxChange}
                             />
 
