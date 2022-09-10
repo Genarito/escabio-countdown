@@ -27,16 +27,16 @@ interface PlayerListProps {
  * @param props Component's props
  */
 export const ItemsList = (props: PlayerListProps) => {
-    const [newItem, setNewItem] = useState<string>('')
+    const [newName, setNewName] = useState<string>('')
 
     /**
      * Check if can add a new item
      * @return True if can, false otherwise
      */
-    function canAdd(): boolean { return newItem.trim().length > 0 }
+    function canAdd(): boolean { return newName.trim().length > 0 }
 
     function addNewItem() {
-        const newItemToAdd = newItem.trim()
+        const newItemToAdd = newName.trim()
         // First checks if that person exists
         const exists = props.items.some((item) => item === newItemToAdd)
         if (exists) {
@@ -46,7 +46,7 @@ export const ItemsList = (props: PlayerListProps) => {
 
         // Adds and reset
         props.addItem(newItemToAdd)
-        setNewItem('')
+        setNewName('')
     }
     
     /**
@@ -60,7 +60,7 @@ export const ItemsList = (props: PlayerListProps) => {
     }
 
     // Filter for searching when adding
-    const textFilter = newItem.trim().toLowerCase()
+    const textFilter = newName.trim().toLowerCase()
     const filteredItems = props.items
         .filter((item) => item.trim().toLowerCase().includes(textFilter))
 
@@ -74,8 +74,14 @@ export const ItemsList = (props: PlayerListProps) => {
                         type="text"
                         className="form-control"
                         placeholder={`Busca o agrega ${props.headerDescription.toLowerCase()}`}
-                        value={newItem}
-                        onChange={(e) => setNewItem(e.target.value)}
+                        value={newName}
+                        onChange={(e) => {
+                            // Prevents huge names on screen
+                            const newNameValue = e.target.value
+                            if (newNameValue.length <= 20) {
+                                setNewName(newNameValue)
+                            }
+                        }}
                         onKeyDown={handleKeyDown}
                     />
 
