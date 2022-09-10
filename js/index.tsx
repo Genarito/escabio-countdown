@@ -23,7 +23,8 @@ import video from '../videos/party.mp4';
 
 const MILISECONDS_TO_HIDE_ELEMENTS = 15000 // Number of milliseconds to show the number of the loser until it's cleaned
 const MAX_COMMON_COUNT_UNTIL_LIGHTNING = 5; // Count common rounds until a lightning round
-const COUNT_LOOSERS_FOR_LIGTHNING_ROUND = 5; // Count for looser to show on every lightning round
+const COUNT_LOSERS_FOR_LIGHTNING_ROUND = 5; // Count for looser to show on every lightning round
+const DEFAULT_BACKGROUND_TYPE: BackgroundType = 'wall'; // Default background to show
 
 
 /**
@@ -46,7 +47,7 @@ interface EscabioState {
  * Renders main component
  */
 class Escabio extends React.Component<{}, EscabioState> {
-    private defaultCoundown: number
+    private defaultCountdown: number
     private lightningNames: string[]
     private lightning: number
     private commonRoundCurrentCount: number
@@ -54,16 +55,16 @@ class Escabio extends React.Component<{}, EscabioState> {
     constructor(props) {
         super(props);
 
-        this.defaultCoundown = 600
+        this.defaultCountdown = 600
 
         this.state = {
-            countdown: this.defaultCoundown,
-            newCountdown: this.secondsToMinutes(this.defaultCoundown),
+            countdown: this.defaultCountdown,
+            newCountdown: this.secondsToMinutes(this.defaultCountdown),
             loserName: '',
             drink: '',
             names: [],
             drinks: [],
-            background: 'wall',
+            background: DEFAULT_BACKGROUND_TYPE,
             enableLightningRound: true,
             showDrink: false,
             sidebarOpen: false
@@ -131,7 +132,7 @@ class Escabio extends React.Component<{}, EscabioState> {
     setCountdownTime = () => {
         const newCountdownInSeconds = this.minutesToSeconds(this.state.newCountdown)
         this.setState({ countdown: newCountdownInSeconds }, this.saveStateInLocalStorage)
-        this.defaultCoundown = newCountdownInSeconds
+        this.defaultCountdown = newCountdownInSeconds
         this.lightning = 0
     }
 
@@ -139,14 +140,14 @@ class Escabio extends React.Component<{}, EscabioState> {
      * Loads saved data from Local Storage
      */
     loadFromLocalStorage() {
-        const savedCountdownInSeconds = this.parseOrDefault('countdown', this.defaultCoundown)
-        this.defaultCoundown = savedCountdownInSeconds
+        const savedCountdownInSeconds = this.parseOrDefault('countdown', this.defaultCountdown)
+        this.defaultCountdown = savedCountdownInSeconds
         this.setState({
             countdown: savedCountdownInSeconds,
             newCountdown: this.secondsToMinutes(savedCountdownInSeconds),
             names: this.parseOrDefault<string[]>('names', []),
             drinks: this.parseOrDefault<string[]>('drinks', []),
-            background: this.parseOrDefault('background', 'video'),
+            background: this.parseOrDefault('background', DEFAULT_BACKGROUND_TYPE),
             enableLightningRound: this.parseOrDefault('enableLightningRound', true),
             showDrink: this.parseOrDefault('showDrink', false),
         }, this.updateLightningNames) // Updates names to prevent empty output on first lightning round
@@ -273,7 +274,7 @@ class Escabio extends React.Component<{}, EscabioState> {
                 this.commonRoundCurrentCount++;
             } else {
                 // Lightning round
-                if (this.lightning < COUNT_LOOSERS_FOR_LIGTHNING_ROUND) {
+                if (this.lightning < COUNT_LOSERS_FOR_LIGHTNING_ROUND) {
                     this.lightningRound();
                     this.lightning++;
                 }
@@ -291,7 +292,7 @@ class Escabio extends React.Component<{}, EscabioState> {
         let randomDrinkIndex = Math.floor(Math.random() * (this.state.drinks.length));
         
         this.setState({
-            countdown: this.defaultCoundown,
+            countdown: this.defaultCountdown,
             loserName: this.state.names[randomNameIndex],
             drink: this.state.drinks[randomDrinkIndex]
         });
@@ -318,13 +319,13 @@ class Escabio extends React.Component<{}, EscabioState> {
         }
 
         let loserName = this.lightningNames[randomNameIndex];
-        let countd; // Time between rounds
+        let countdownBetweenRounds; // Time between rounds
         this.lightningNames.splice(randomNameIndex, 1); // Deletes the name to not repeat
 
         // Last lightning round
-        if (this.lightning === (COUNT_LOOSERS_FOR_LIGTHNING_ROUND - 1)) {
+        if (this.lightning === (COUNT_LOSERS_FOR_LIGHTNING_ROUND - 1)) {
             // Resets variables
-            countd = this.defaultCoundown
+            countdownBetweenRounds = this.defaultCountdown
             this.commonRoundCurrentCount = 0;
             this.lightning = 0;
             this.updateLightningNames()
@@ -337,12 +338,13 @@ class Escabio extends React.Component<{}, EscabioState> {
                 });
             }, MILISECONDS_TO_HIDE_ELEMENTS);
         } else {
-            countd = 3;
+            // During lightning rounds, there're 3 seconds between each loser
+            countdownBetweenRounds = 3;
         }
 
         // Shows loser
         this.setState({
-            countdown: countd,
+            countdown: countdownBetweenRounds,
             loserName: loserName,
             drink: this.state.drinks[randomDrinkIndex]
         });
