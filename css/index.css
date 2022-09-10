@@ -3,7 +3,7 @@
 }
 
 #loser {
-    font-size: 13em;
+    font-size: 12em;
 }
 
 #logo-img {
@@ -13,6 +13,10 @@
     position: absolute;
     right: 2%;
     width: 150px;
+}
+
+#div-main-content {
+    padding-right: 0;
 }
 
 #div-main-content.with-background-wall h1,
@@ -118,8 +122,8 @@ body,
     width: 100%;
 }
 
-#app-div>* {
-    max-width: 100%;
+#app-div > div {
+    width: 100%;
 }
 
 .margin-top-2 {
