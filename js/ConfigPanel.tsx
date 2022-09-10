@@ -25,7 +25,9 @@ interface ConfigPanelProps {
     /** Boolean to enable "Lightning round" option's value */
     enableLightningRound: boolean,
     /** Boolean to show "Show drink" option's value */    
-    showDrink: boolean
+    showDrink: boolean,
+    /** Logo img. */
+    logoImgBase64: string | ArrayBuffer,
     /** Callback to handle countdown time changes */
     handleCountdownTimeChange: (newCountdown: number) => void,
     /** Callback to save countdown time changes */
@@ -39,7 +41,11 @@ interface ConfigPanelProps {
     /** Callback to add a new drink to the drinks list */
     addDrink: (newName: string) => void,
     /** Callback to remove a specific drink from the list */
-    removeDrink: (idx: number) => void
+    removeDrink: (idx: number) => void,
+    /** Callback to select a new logo. */
+    handleLogoChange: (e) => void
+    /** Callback to clean the Logo img. */
+    cleanLogoImg: () => void
 }
 
 const ConfigPanel = (props: ConfigPanelProps) => {
@@ -122,11 +128,37 @@ const ConfigPanel = (props: ConfigPanelProps) => {
                                 checked={props.showDrink}
                                 onChange={props.handleCheckboxChange}
                             />
+
+                            <hr />
+
+                            {/* Logo */}
+                            <h4>Logo</h4>
+                            <Form.File
+                                id="custom-file"
+                                label="Seleccionar logo"
+                                custom
+                                onChange={props.handleLogoChange}
+                            />
+
+                            {props.logoImgBase64 &&
+                                <Button
+                                    variant="outline-danger"
+                                    className='margin-top-2'
+                                    size="sm"
+                                    block
+                                    onClick={props.cleanLogoImg}
+                                >
+                                    Limpiar imagen
+                                </Button>
+                            }
                         </Form.Group>
                     </Col>
                 </Row>
+
+                <hr />
+
+                {/* Players */}
                 <Row>
-                    {/* Players */}
                     <ItemsList
                         headerDescription="Jugadores"
                         items={props.names}
@@ -134,6 +166,7 @@ const ConfigPanel = (props: ConfigPanelProps) => {
                         removeItem={props.removeName}
                     />
                 </Row>
+                
                 {/* Drinks */}
                 {props.showDrink &&
                     <Row>

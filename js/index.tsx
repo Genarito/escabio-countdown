@@ -6,6 +6,7 @@ import Sidebar from "react-sidebar";
 import { BackgroundType, ConfigPanel } from './ConfigPanel';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { Image } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 
 // Styles
@@ -37,6 +38,7 @@ interface EscabioState {
     drink: string,
     names: string[],
     drinks: string[],
+    logoImgBase64: string | ArrayBuffer,
     background: BackgroundType,
     enableLightningRound: boolean,
     showDrink: boolean,
@@ -64,6 +66,7 @@ class Escabio extends React.Component<{}, EscabioState> {
             drink: '',
             names: [],
             drinks: [],
+            logoImgBase64: '',
             background: DEFAULT_BACKGROUND_TYPE,
             enableLightningRound: true,
             showDrink: false,
@@ -113,6 +116,29 @@ class Escabio extends React.Component<{}, EscabioState> {
     handleCountdownTimeChange = (newCountdown: number) => { this.setState({ newCountdown }) }
 
     /**
+     * Handles changes in the logo input
+     * @param e Event
+     */
+    handleLogoChange = (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const newFile = e.target.files[0]
+            
+            // Only images
+            if (['image/png', 'image/jpeg', 'image/jpg', 'image/webp'].includes(newFile.type)) {
+                const reader = new FileReader();
+                const self = this
+                reader.onloadend = function () {
+                    self.setState({ logoImgBase64: reader.result }, self.saveStateInLocalStorage)
+                }
+                reader.readAsDataURL(newFile);
+            }
+        }
+    }
+
+    /** Cleans the logo img */
+    cleanLogoImg = () => { this.setState({ logoImgBase64: '' }, this.saveStateInLocalStorage) }
+
+    /**
      * Transforms seconds to minutes
      * @param seconds Seconds to transform as minutes
      * @return Minutes
@@ -148,6 +174,7 @@ class Escabio extends React.Component<{}, EscabioState> {
             names: this.parseOrDefault<string[]>('names', []),
             drinks: this.parseOrDefault<string[]>('drinks', []),
             background: this.parseOrDefault('background', DEFAULT_BACKGROUND_TYPE),
+            logoImgBase64: this.parseOrDefault('logoImgBase64', ''),
             enableLightningRound: this.parseOrDefault('enableLightningRound', true),
             showDrink: this.parseOrDefault('showDrink', false),
         }, this.updateLightningNames) // Updates names to prevent empty output on first lightning round
@@ -225,6 +252,7 @@ class Escabio extends React.Component<{}, EscabioState> {
         this.saveKeyAndValueInJSON('names', this.state.names)
         this.saveKeyAndValueInJSON('drinks', this.state.drinks)
         this.saveKeyAndValueInJSON('background', this.state.background)
+        this.saveKeyAndValueInJSON('logoImgBase64', this.state.logoImgBase64)
         this.saveKeyAndValueInJSON('enableLightningRound', this.state.enableLightningRound)
         this.saveKeyAndValueInJSON('showDrink', this.state.showDrink)
     }
@@ -464,6 +492,7 @@ class Escabio extends React.Component<{}, EscabioState> {
                             newCountdown={this.state.newCountdown}
                             names={this.state.names}
                             drinks={this.state.drinks}
+                            logoImgBase64={this.state.logoImgBase64}
                             handleCountdownTimeChange={this.handleCountdownTimeChange}
                             setCountdownTime={this.setCountdownTime}
                             addName={this.addName}
@@ -474,6 +503,8 @@ class Escabio extends React.Component<{}, EscabioState> {
                             enableLightningRound={this.state.enableLightningRound}
                             showDrink={this.state.showDrink}
                             handleCheckboxChange={this.handleCheckboxChange}
+                            handleLogoChange={this.handleLogoChange}
+                            cleanLogoImg={this.cleanLogoImg}
                         />
                     }
                     touchHandleWidth={20}
@@ -485,6 +516,10 @@ class Escabio extends React.Component<{}, EscabioState> {
                         <i id="config-button" className="fas fa-cog"></i>
                     </Button>
                 </Sidebar>
+
+                {this.state.logoImgBase64 &&
+                    <Image id='logo-img' rounded src={this.state.logoImgBase64 as string} />
+                }
             </div>
         );
     }
