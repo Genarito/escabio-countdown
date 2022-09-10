@@ -23,7 +23,7 @@ import video from '../videos/party.mp4';
 
 
 const MILISECONDS_TO_HIDE_ELEMENTS = 15000 // Number of milliseconds to show the number of the loser until it's cleaned
-const MAX_COMMON_COUNT_UNTIL_LIGHTNING = 5; // Count common rounds until a lightning round
+const MAX_ROUND_COUNT_UNTIL_LIGHTNING = 5; // Count common rounds until a lightning round
 const COUNT_LOSERS_FOR_LIGHTNING_ROUND = 5; // Count for looser to show on every lightning round
 const DEFAULT_BACKGROUND_TYPE: BackgroundType = 'wall'; // Default background to show
 
@@ -271,7 +271,7 @@ class Escabio extends React.Component<{}, EscabioState> {
      * @param e Checkbox change event
      */
     handleCheckboxChange = (e) => {
-        const newValue = e.target.type ? e.target.value : e.target.checked
+        const newValue = e.target.type !== 'checkbox' ? e.target.value : e.target.checked
         this.setState<never>({[e.target.name]: newValue}, this.saveStateInLocalStorage);
     }
     
@@ -297,14 +297,13 @@ class Escabio extends React.Component<{}, EscabioState> {
         // It's time to drink!
         if (!minutes && secondsString == '00') {
             // Normal round
-            if (this.commonRoundCurrentCount < MAX_COMMON_COUNT_UNTIL_LIGHTNING) {
+            if (!this.state.enableLightningRound || this.commonRoundCurrentCount < MAX_ROUND_COUNT_UNTIL_LIGHTNING) {
                 this.getLoser();
                 this.commonRoundCurrentCount++;
             } else {
                 // Lightning round
                 if (this.lightning < COUNT_LOSERS_FOR_LIGHTNING_ROUND) {
                     this.lightningRound();
-                    this.lightning++;
                 }
             }
         }    
@@ -366,6 +365,8 @@ class Escabio extends React.Component<{}, EscabioState> {
                 });
             }, MILISECONDS_TO_HIDE_ELEMENTS);
         } else {
+            this.lightning++;
+
             // During lightning rounds, there're 3 seconds between each loser
             countdownBetweenRounds = 3;
         }
@@ -390,7 +391,7 @@ class Escabio extends React.Component<{}, EscabioState> {
      */
     shouldShowLightningRoundBackground() {
         return this.state.enableLightningRound
-            && this.commonRoundCurrentCount >= MAX_COMMON_COUNT_UNTIL_LIGHTNING
+            && this.commonRoundCurrentCount >= MAX_ROUND_COUNT_UNTIL_LIGHTNING
             && this.state.countdown <= 30;
     }
 
