@@ -63,7 +63,7 @@ class Escabio extends React.Component<{}, EscabioState> {
             drink: '',
             names: [],
             drinks: [],
-            background: 'video',
+            background: 'wall',
             enableLightningRound: true,
             showDrink: false,
             sidebarOpen: false
