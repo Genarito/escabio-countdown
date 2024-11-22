@@ -390,7 +390,7 @@ class Escabio extends React.Component<{}, EscabioState> {
      * NOTE: only shows the GIF in last 30 seconds
      */
     shouldShowLightningRoundBackground() {
-        return true || this.state.enableLightningRound // TODO: remove true
+        return this.state.enableLightningRound
             && this.commonRoundCurrentCount >= MAX_ROUND_COUNT_UNTIL_LIGHTNING
             && this.state.countdown <= 30;
     }
