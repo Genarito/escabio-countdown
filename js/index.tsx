@@ -17,12 +17,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.css'
 
 // Imgs
-import logo from '../gifs/lightning.gif';
+import logo from '../gifs/lightning.webp';
 import wall from '../imgs/wall.png'
 import video from '../videos/party.mp4';
 
 
-const MILISECONDS_TO_HIDE_ELEMENTS = 15000 // Number of milliseconds to show the number of the loser until it's cleaned
+const MILLISECONDS_TO_HIDE_ELEMENTS = 15000 // Number of milliseconds to show the number of the loser until it's cleaned
 const MAX_ROUND_COUNT_UNTIL_LIGHTNING = 5; // Count common rounds until a lightning round
 const COUNT_LOSERS_FOR_LIGHTNING_ROUND = 5; // Count for looser to show on every lightning round
 const DEFAULT_BACKGROUND_TYPE: BackgroundType = 'wall'; // Default background to show
@@ -330,7 +330,7 @@ class Escabio extends React.Component<{}, EscabioState> {
                 loserName: '',
                 drink: ''
             });
-        }, MILISECONDS_TO_HIDE_ELEMENTS);
+        }, MILLISECONDS_TO_HIDE_ELEMENTS);
     }
     
     /**
@@ -363,7 +363,7 @@ class Escabio extends React.Component<{}, EscabioState> {
                     loserName: '',
                     drink: ''
                 });
-            }, MILISECONDS_TO_HIDE_ELEMENTS);
+            }, MILLISECONDS_TO_HIDE_ELEMENTS);
         } else {
             this.lightning++;
 
@@ -390,7 +390,7 @@ class Escabio extends React.Component<{}, EscabioState> {
      * NOTE: only shows the GIF in last 30 seconds
      */
     shouldShowLightningRoundBackground() {
-        return this.state.enableLightningRound
+        return true || this.state.enableLightningRound // TODO: remove true
             && this.commonRoundCurrentCount >= MAX_ROUND_COUNT_UNTIL_LIGHTNING
             && this.state.countdown <= 30;
     }
