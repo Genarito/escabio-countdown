@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 // Components
 import Row from 'react-bootstrap/Row';
@@ -7,9 +7,13 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { ItemsList } from './ItemsList'
 import { ImportCSVPanel } from './ImportCSVPanel';
+import { Modal } from 'react-bootstrap';
 
 /** All possible types of background */
 type BackgroundType = 'blank' | 'wall' | 'video'
+
+/** Possible elements in the system. */
+type ElementType = 'names' | 'drinks'
 
 /**
  * Component's props
@@ -49,11 +53,41 @@ interface ConfigPanelProps {
     cleanLogoImg: () => void,
     /** Callback to handle the imported names from the CSV file. */
     handleImportedNames: (names: string[], replaceNames: boolean) => void;
+    /** Callback to remove all elements from the list */
+    removeAll: (elements: ElementType) => void
 }
 
 const ConfigPanel = (props: ConfigPanelProps) => {
+    const [clearConfirmationElement, setClearConfirmationElement] = useState<ElementType | null>(null)
+
+
+    /** Closes the confirmation modal. */
+    const handleCloseConfirmation = () => setClearConfirmationElement(null)
+
+    const confirmRemoveAll = () => {
+        props.removeAll(clearConfirmationElement)
+        handleCloseConfirmation()
+    }
+
     return (
         <React.Fragment>
+            <Modal show={clearConfirmationElement !== null} onHide={handleCloseConfirmation}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Modal title</Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    <p>
+                        Eliminar todos los elementos? Esta acción <strong>no se puede deshacer</strong>.
+                    </p>
+                </Modal.Body>
+
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseConfirmation}>Cerrar</Button>
+                    <Button variant="danger" onClick={confirmRemoveAll}>Limpiar</Button>
+                </Modal.Footer>
+            </Modal>
+
             <div id="config-panel-div">
                 <Row>
                     {/* Checkbox options */}
@@ -167,6 +201,7 @@ const ConfigPanel = (props: ConfigPanelProps) => {
                         items={props.names}
                         addItem={props.addName}
                         removeItem={props.removeName}
+                        clearAll={() => setClearConfirmationElement('names')}
                     />
                 </Row>
                 <Row className="margin-top-2">
@@ -183,6 +218,7 @@ const ConfigPanel = (props: ConfigPanelProps) => {
                             items={props.drinks}
                             addItem={props.addDrink}
                             removeItem={props.removeDrink}
+                            clearAll={() => setClearConfirmationElement('drinks')}
                         />
                     </Row>
                 }
@@ -199,4 +235,4 @@ const ConfigPanel = (props: ConfigPanelProps) => {
     )
 }
 
-export { ConfigPanel, BackgroundType }
+export { ConfigPanel, BackgroundType, ElementType }

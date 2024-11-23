@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 
 // Components
 import Sidebar from "react-sidebar";
-import { BackgroundType, ConfigPanel } from './ConfigPanel';
+import { BackgroundType, ConfigPanel, ElementType } from './ConfigPanel';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Image } from 'react-bootstrap';
@@ -20,7 +20,6 @@ import '@fortawesome/fontawesome-free/css/all.css'
 import logo from '../gifs/lightning.webp';
 import wall from '../imgs/wall.png'
 import video from '../videos/party.mp4';
-
 
 const MILLISECONDS_TO_HIDE_ELEMENTS = 15000 // Number of milliseconds to show the number of the loser until it's cleaned
 const MAX_ROUND_COUNT_UNTIL_LIGHTNING = 5; // Count common rounds until a lightning round
@@ -246,6 +245,15 @@ class Escabio extends React.Component<{}, EscabioState> {
             drinks.splice(idx, 1);
         }
         this.setState({ drinks }, this.saveStateInLocalStorage)
+    }
+
+    /** Removes all the names or drinks from the list */
+    removeAll = (elements: ElementType) => {
+        if (elements === 'names') {
+            this.setState({ names: [] }, this.saveStorageAndUpdateLightningNames)
+        } else {
+            this.setState({ drinks: [] }, this.saveStateInLocalStorage)
+        }
     }
 
     /**
@@ -520,6 +528,7 @@ class Escabio extends React.Component<{}, EscabioState> {
                             handleLogoChange={this.handleLogoChange}
                             cleanLogoImg={this.cleanLogoImg}
                             handleImportedNames={this.handleImportedNames}
+                            removeAll={this.removeAll}
                         />
                     }
                     touchHandleWidth={20}
