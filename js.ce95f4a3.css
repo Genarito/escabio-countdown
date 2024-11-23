@@ -130,6 +130,10 @@ body,
     margin-top: 2% !important;
 }
 
+.margin-right-5 {
+    margin-right: 5% !important;
+}
+
 .clickable:hover {
     cursor: pointer !important;
 }
