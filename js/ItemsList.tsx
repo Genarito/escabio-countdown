@@ -70,6 +70,7 @@ export const ItemsList = (props: PlayerListProps) => {
                 {/* Input to add a new loser */}
                 <Col md={12}>
                     <h4>{props.headerDescription}</h4>
+
                     <input
                         type="text"
                         className="form-control"

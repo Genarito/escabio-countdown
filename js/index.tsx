@@ -202,6 +202,19 @@ class Escabio extends React.Component<{}, EscabioState> {
     }
 
     /**
+     * Handles imported names from a CSV file.
+     * @param names List of names imported from file.
+     * @param replaceNames If true, replaces all the names with the imported ones.
+     */
+    handleImportedNames = (names: string[], replaceNames: boolean) => {
+        if (replaceNames) {
+            this.setState({ names }, this.saveStorageAndUpdateLightningNames)
+        } else {
+            this.setState((previousState) => ({ names: [...previousState.names, ...names] }), this.saveStorageAndUpdateLightningNames)
+        }
+    }
+
+    /**
      * Removes a specific name by index from the list name
      * @param idx Index to remove from names array
      */
@@ -506,6 +519,7 @@ class Escabio extends React.Component<{}, EscabioState> {
                             handleCheckboxChange={this.handleCheckboxChange}
                             handleLogoChange={this.handleLogoChange}
                             cleanLogoImg={this.cleanLogoImg}
+                            handleImportedNames={this.handleImportedNames}
                         />
                     }
                     touchHandleWidth={20}

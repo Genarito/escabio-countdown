@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { ItemsList } from './ItemsList'
+import { ImportCSVPanel } from './ImportCSVPanel';
 
 /** All possible types of background */
 type BackgroundType = 'blank' | 'wall' | 'video'
@@ -45,7 +46,9 @@ interface ConfigPanelProps {
     /** Callback to select a new logo. */
     handleLogoChange: (e) => void
     /** Callback to clean the Logo img. */
-    cleanLogoImg: () => void
+    cleanLogoImg: () => void,
+    /** Callback to handle the imported names from the CSV file. */
+    handleImportedNames: (names: string[], replaceNames: boolean) => void;
 }
 
 const ConfigPanel = (props: ConfigPanelProps) => {
@@ -165,6 +168,11 @@ const ConfigPanel = (props: ConfigPanelProps) => {
                         addItem={props.addName}
                         removeItem={props.removeName}
                     />
+                </Row>
+                <Row className="margin-top-2">
+                    <Col md={12}>
+                        <ImportCSVPanel handleImportedNames={props.handleImportedNames} />
+                    </Col>
                 </Row>
                 
                 {/* Drinks */}
