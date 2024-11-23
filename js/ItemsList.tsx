@@ -19,7 +19,9 @@ interface PlayerListProps {
     /** Callback to add a specific item from the list */
     addItem: (newItem: string) => void
     /** Callback to remove a specific item from the list */
-    removeItem: (idx: number) => void
+    removeItem: (idx: number) => void,
+    /** Clear all confirmation callback. */
+    clearAll: () => void
 }
 
 /**
@@ -70,6 +72,7 @@ export const ItemsList = (props: PlayerListProps) => {
                 {/* Input to add a new loser */}
                 <Col md={12}>
                     <h4>{props.headerDescription}</h4>
+
                     <input
                         type="text"
                         className="form-control"
@@ -97,17 +100,25 @@ export const ItemsList = (props: PlayerListProps) => {
                     <ListGroup className="items-list-group">
                         <ListGroup.Item variant="dark">
                             <h6 id="items-list-header">
-                                {props.headerDescription} <Badge variant="secondary" className="float-right">{props.items.length}</Badge>
+                                {props.headerDescription}
+                                <Badge variant="secondary" className="float-right">{props.items.length}</Badge>
+                                {/* Button to clear all. */}
+                                <i
+                                    className="fas fa-trash clickable float-right delete-name-icon margin-right-5"
+                                    title="Borrar todos"
+                                    onClick={props.clearAll}
+                                />
                             </h6>
                         </ListGroup.Item>
                         {filteredItems.map((name, idx) => (
                             <ListGroup.Item key={name}>
                                 {name}
 
-                                <i className="fas fa-trash clickable float-right delete-name-icon"
+                                <i
+                                    className="fas fa-trash clickable float-right delete-name-icon"
                                     title="Borrar"
                                     onClick={() => props.removeItem(idx)}
-                                ></i>
+                                />
                             </ListGroup.Item>
                         ))}
                     </ListGroup>

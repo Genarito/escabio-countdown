@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 
 // Components
 import Sidebar from "react-sidebar";
-import { BackgroundType, ConfigPanel } from './ConfigPanel';
+import { BackgroundType, ConfigPanel, ElementType } from './ConfigPanel';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Image } from 'react-bootstrap';
@@ -17,12 +17,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.css'
 
 // Imgs
-import logo from '../gifs/lightning.gif';
+import logo from '../gifs/lightning.webp';
 import wall from '../imgs/wall.png'
 import video from '../videos/party.mp4';
 
-
-const MILISECONDS_TO_HIDE_ELEMENTS = 15000 // Number of milliseconds to show the number of the loser until it's cleaned
+const MILLISECONDS_TO_HIDE_ELEMENTS = 15000 // Number of milliseconds to show the number of the loser until it's cleaned
 const MAX_ROUND_COUNT_UNTIL_LIGHTNING = 5; // Count common rounds until a lightning round
 const COUNT_LOSERS_FOR_LIGHTNING_ROUND = 5; // Count for looser to show on every lightning round
 const DEFAULT_BACKGROUND_TYPE: BackgroundType = 'wall'; // Default background to show
@@ -202,6 +201,19 @@ class Escabio extends React.Component<{}, EscabioState> {
     }
 
     /**
+     * Handles imported names from a CSV file.
+     * @param names List of names imported from file.
+     * @param replaceNames If true, replaces all the names with the imported ones.
+     */
+    handleImportedNames = (names: string[], replaceNames: boolean) => {
+        if (replaceNames) {
+            this.setState({ names }, this.saveStorageAndUpdateLightningNames)
+        } else {
+            this.setState((previousState) => ({ names: [...previousState.names, ...names] }), this.saveStorageAndUpdateLightningNames)
+        }
+    }
+
+    /**
      * Removes a specific name by index from the list name
      * @param idx Index to remove from names array
      */
@@ -233,6 +245,15 @@ class Escabio extends React.Component<{}, EscabioState> {
             drinks.splice(idx, 1);
         }
         this.setState({ drinks }, this.saveStateInLocalStorage)
+    }
+
+    /** Removes all the names or drinks from the list */
+    removeAll = (elements: ElementType) => {
+        if (elements === 'names') {
+            this.setState({ names: [] }, this.saveStorageAndUpdateLightningNames)
+        } else {
+            this.setState({ drinks: [] }, this.saveStateInLocalStorage)
+        }
     }
 
     /**
@@ -330,7 +351,7 @@ class Escabio extends React.Component<{}, EscabioState> {
                 loserName: '',
                 drink: ''
             });
-        }, MILISECONDS_TO_HIDE_ELEMENTS);
+        }, MILLISECONDS_TO_HIDE_ELEMENTS);
     }
     
     /**
@@ -363,7 +384,7 @@ class Escabio extends React.Component<{}, EscabioState> {
                     loserName: '',
                     drink: ''
                 });
-            }, MILISECONDS_TO_HIDE_ELEMENTS);
+            }, MILLISECONDS_TO_HIDE_ELEMENTS);
         } else {
             this.lightning++;
 
@@ -506,6 +527,8 @@ class Escabio extends React.Component<{}, EscabioState> {
                             handleCheckboxChange={this.handleCheckboxChange}
                             handleLogoChange={this.handleLogoChange}
                             cleanLogoImg={this.cleanLogoImg}
+                            handleImportedNames={this.handleImportedNames}
+                            removeAll={this.removeAll}
                         />
                     }
                     touchHandleWidth={20}
