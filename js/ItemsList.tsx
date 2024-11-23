@@ -101,13 +101,17 @@ export const ItemsList = (props: PlayerListProps) => {
                         <ListGroup.Item variant="dark">
                             <h6 id="items-list-header">
                                 {props.headerDescription}
+
                                 <Badge variant="secondary" className="float-right">{props.items.length}</Badge>
+
                                 {/* Button to clear all. */}
-                                <i
-                                    className="fas fa-trash clickable float-right delete-name-icon margin-right-5"
-                                    title="Borrar todos"
-                                    onClick={props.clearAll}
-                                />
+                                {props.items.length > 0 &&
+                                    <i
+                                        className="fas fa-trash clickable float-right delete-name-icon margin-right-5"
+                                        title="Borrar todos"
+                                        onClick={props.clearAll}
+                                    />
+                                }
                             </h6>
                         </ListGroup.Item>
                         {filteredItems.map((name, idx) => (
