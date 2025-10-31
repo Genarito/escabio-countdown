@@ -33,7 +33,7 @@
 #div-main-content.with-background-wall h1,
 #div-main-content.lightning-round,
 #div-main-content.with-background-wall span {
-    color: white !important;
+    color: rgb(27, 131, 241) !important;
 }
 
 #div-main-content span {
@@ -41,7 +41,7 @@
 }
 
 #drink-label {
-    font-size: 7em;
+    font-size: 8em;
     margin-bottom: 0;
 }
 
