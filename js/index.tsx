@@ -21,7 +21,7 @@ import logo from '../gifs/lightning.webp';
 import wall from '../imgs/wall.png'
 import video from '../videos/party.mp4';
 
-const MILLISECONDS_TO_HIDE_ELEMENTS = 15000 // Number of milliseconds to show the number of the loser until it's cleaned
+const MILLISECONDS_TO_HIDE_ELEMENTS = 20000 // Number of milliseconds to show the number of the loser until it's cleaned
 const MAX_ROUND_COUNT_UNTIL_LIGHTNING = 5; // Count common rounds until a lightning round
 const COUNT_LOSERS_FOR_LIGHTNING_ROUND = 5; // Count for looser to show on every lightning round
 const DEFAULT_BACKGROUND_TYPE: BackgroundType = 'wall'; // Default background to show
@@ -526,7 +526,7 @@ class Escabio extends React.Component<{}, EscabioState> {
                         {this.state.loserName &&
                             <h1 id="loser">
                                 {/* Victim */}
-                                <strong className="danger">{this.state.loserName}</strong> en la pera <span style={{ fontSize: '0.3em' }}>🤜🏻🍐</span>&nbsp;        
+                                <strong className="danger flicker-animation">{this.state.loserName}</strong> en la pera <span style={{ fontSize: '0.3em' }}>🤜🏻🍐</span>&nbsp;        
                                 
                                 {/* Drink */}
                                 {this.state.showDrink &&
