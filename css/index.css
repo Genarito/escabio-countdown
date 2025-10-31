@@ -1,9 +1,20 @@
+@keyframes flicker-effect {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); } /*grows 10% larger than the original size */
+  100% { transform: scale(1); }
+}
+
+.flicker-animation {
+  animation: flicker-effect 0.8s ease-in-out infinite;
+  display: inline-block; 
+}
+
 .danger {
     color: rgb(189, 37, 37);
 }
 
 #loser {
-    font-size: 12em;
+    font-size: 10em;
 }
 
 #logo-img {
