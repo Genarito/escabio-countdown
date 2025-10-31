@@ -18,7 +18,7 @@ import '@fortawesome/fontawesome-free/css/all.css'
 
 // Imgs
 import logo from '../gifs/lightning.webp';
-import wall from '../imgs/wall.png'
+import wall from '../imgs/wall4.png'
 import video from '../videos/party.mp4';
 
 const MILLISECONDS_TO_HIDE_ELEMENTS = 20000 // Number of milliseconds to show the number of the loser until it's cleaned
