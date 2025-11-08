@@ -10,7 +10,7 @@ import { ImportCSVPanel } from './ImportCSVPanel';
 import { Modal } from 'react-bootstrap';
 
 /** All possible types of background */
-type BackgroundType = 'blank' | 'wall' | 'video'
+type BackgroundType = 'blank' | 'wall' | 'wall-halloween' | 'video'
 
 /** Possible elements in the system. */
 type ElementType = 'names' | 'drinks'
@@ -136,6 +136,15 @@ const ConfigPanel = (props: ConfigPanelProps) => {
                                 name="background"
                                 value='wall'
                                 checked={props.background === 'wall'}
+                                onChange={props.handleCheckboxChange}
+                            />
+
+                            <Form.Check
+                                type="radio"
+                                label="Fondo Halloween"
+                                name="background"
+                                value='wall-halloween'
+                                checked={props.background === 'wall-halloween'}
                                 onChange={props.handleCheckboxChange}
                             />
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from "react-dom";
+import { shuffle } from 'lodash';
 
 // Components
 import Sidebar from "react-sidebar";
@@ -18,10 +19,11 @@ import '@fortawesome/fontawesome-free/css/all.css'
 
 // Imgs
 import logo from '../gifs/lightning.webp';
-import wall from '../imgs/wall4.png'
+import wall from '../imgs/wall.png'
+import wallHalloween from '../imgs/wall-halloween.png'
 import video from '../videos/party.mp4';
 
-const MILLISECONDS_TO_HIDE_ELEMENTS = 20000 // Number of milliseconds to show the number of the loser until it's cleaned
+const MILLISECONDS_TO_HIDE_ELEMENTS = 15000 // Number of milliseconds to show the number of the loser until it's cleaned
 const MAX_ROUND_COUNT_UNTIL_LIGHTNING = 5; // Count common rounds until a lightning round
 const COUNT_LOSERS_FOR_LIGHTNING_ROUND = 5; // Count for looser to show on every lightning round
 const DEFAULT_BACKGROUND_TYPE: BackgroundType = 'wall'; // Default background to show
@@ -302,7 +304,7 @@ class Escabio extends React.Component<{}, EscabioState> {
      * Gets countdown content to show
      */
     generateCountdown() {
-        let countdownDescripcion;
+        let countdownDescription;
         
         let divisor_for_minutes = this.state.countdown % (60 * 60);
         let minutes = Math.floor(divisor_for_minutes / 60);
@@ -312,9 +314,9 @@ class Escabio extends React.Component<{}, EscabioState> {
         const secondsString = (seconds < 10) ? '0' + seconds : seconds;
         
         if (minutes) {
-            countdownDescripcion = minutes + ':' + secondsString + ' minutos';
+            countdownDescription = minutes + ':' + secondsString + ' minutos';
         } else {
-            countdownDescripcion = secondsString + ' segundos';
+            countdownDescription = secondsString + ' segundos';
         }
 
         // It's time to drink!
@@ -331,51 +333,38 @@ class Escabio extends React.Component<{}, EscabioState> {
             }
         }    
         
-        return countdownDescripcion;
+        return countdownDescription;
     }
-    
+
     /**
-     * Select randomly a loser in a common (normal) round
+     * Gets a random element from an array. Shuffles an array and gets the first element.
+     * This is more robust than doing Math.random() * length as it avoids getting non-uniform distributions.
+     * @param array Array to get the random element from
+     * @returns Random element from the array
      */
-    // getLoser() {
-    //     let randomNameIndex = Math.floor(Math.random() * (this.state.names.length));
-    //     let randomDrinkIndex = Math.floor(Math.random() * (this.state.drinks.length));
-        
-    //     this.setState({
-    //         countdown: this.defaultCountdown,
-    //         loserName: this.state.names[randomNameIndex],
-    //         drink: this.state.drinks[randomDrinkIndex]
-    //     });
-        
-    //     // Hides name in some seconds
-    //     setTimeout(() => {
-    //         this.setState({
-    //             loserName: '',
-    //             drink: ''
-    //         });
-    //     }, MILLISECONDS_TO_HIDE_ELEMENTS);
-    // }
+    getRandomElementFromArray<T>(array: T[]): T {
+        return shuffle(array)[0];
+    }
 
     /**
      * Select randomly a loser in a common (normal) round
      */
     getLoser() {
         
-        // the temporary list is created by removing the last name chosen
+        // The temporary list is created by removing the last name chosen
         const filteredList = this.state.names.filter(name =>  name !== this.state.lastLoserName );
 
-        // if the filtered list is empty i use the original one
+        // If the filtered list is empty i use the original one
         const listToDraw = filteredList.length > 0 ? filteredList : this.state.names;
 
-        let randomNameIndex = Math.floor(Math.random() * (listToDraw.length));  
-        let randomDrinkIndex = Math.floor(Math.random() * (this.state.drinks.length));
-        const actLoserName = listToDraw[randomNameIndex];
+        const actLoserName = this.getRandomElementFromArray(listToDraw)
+        const randomDrink = this.getRandomElementFromArray(this.state.drinks);
 
         this.setState({
             countdown: this.defaultCountdown,
             loserName: actLoserName,
             lastLoserName: actLoserName,
-            drink: this.state.drinks[randomDrinkIndex]
+            drink: randomDrink
         });
         
         // Hides name in some seconds
@@ -388,20 +377,21 @@ class Escabio extends React.Component<{}, EscabioState> {
     }
 
     /**
-     * Executes a ligthning round logic
+     * Executes a lightning round logic
      */
     lightningRound(){
-        let randomNameIndex = Math.floor(Math.random() * (this.lightningNames.length));;
-        let randomDrinkIndex =  Math.floor(Math.random() * (this.state.drinks.length));
+        const loserName = this.getRandomElementFromArray(this.lightningNames);
+        const randomDrink =  this.getRandomElementFromArray(this.state.drinks);
 
         // In case of having passed all reload all the names
         if (this.lightningNames.length == 1){
             this.lightningNames = this.state.names.slice();
         }
 
-        let loserName = this.lightningNames[randomNameIndex];
         let countdownBetweenRounds; // Time between rounds
-        this.lightningNames.splice(randomNameIndex, 1); // Deletes the name to not repeat
+
+        // Deletes the name to not repeat
+        this.lightningNames = this.lightningNames.filter(name => name !== loserName);
 
         // Last lightning round
         if (this.lightning === (COUNT_LOSERS_FOR_LIGHTNING_ROUND - 1)) {
@@ -421,15 +411,15 @@ class Escabio extends React.Component<{}, EscabioState> {
         } else {
             this.lightning++;
 
-            // During lightning rounds, there're 3 seconds between each loser
-            countdownBetweenRounds = 3;
+            // During lightning rounds, there're 5 seconds between each loser
+            countdownBetweenRounds = 5;
         }
 
         // Shows loser
         this.setState({
             countdown: countdownBetweenRounds,
             loserName: loserName,
-            drink: this.state.drinks[randomDrinkIndex]
+            drink: randomDrink
         });
     }
 
@@ -480,13 +470,21 @@ class Escabio extends React.Component<{}, EscabioState> {
                     backgroundSize: 'cover'
                 }
             } else {
-                backgroundImage = {}
+                if (this.state.background === 'wall-halloween') {
+                    backgroundImage = {
+                        backgroundImage: `url(${wallHalloween})`,
+                        backgroundSize: 'cover'
+                    }
+                } else {
+                    backgroundImage = {}
+                }
             }
         }
         
         let divClass: string
         switch (this.state.background) {
             case 'wall':
+            case 'wall-halloween':
                 divClass = 'with-background-wall'
                 break
             case 'video':
