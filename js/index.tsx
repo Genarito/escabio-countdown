@@ -18,10 +18,10 @@ import '@fortawesome/fontawesome-free/css/all.css'
 
 // Imgs
 import logo from '../gifs/lightning.webp';
-import wall from '../imgs/wall.png'
+import wall from '../imgs/wall4.png'
 import video from '../videos/party.mp4';
 
-const MILLISECONDS_TO_HIDE_ELEMENTS = 15000 // Number of milliseconds to show the number of the loser until it's cleaned
+const MILLISECONDS_TO_HIDE_ELEMENTS = 20000 // Number of milliseconds to show the number of the loser until it's cleaned
 const MAX_ROUND_COUNT_UNTIL_LIGHTNING = 5; // Count common rounds until a lightning round
 const COUNT_LOSERS_FOR_LIGHTNING_ROUND = 5; // Count for looser to show on every lightning round
 const DEFAULT_BACKGROUND_TYPE: BackgroundType = 'wall'; // Default background to show
@@ -34,6 +34,7 @@ interface EscabioState {
     countdown: number,
     newCountdown: number,
     loserName: string,
+    lastLoserName: string | null,
     drink: string,
     names: string[],
     drinks: string[],
@@ -62,6 +63,7 @@ class Escabio extends React.Component<{}, EscabioState> {
             countdown: this.defaultCountdown,
             newCountdown: this.secondsToMinutes(this.defaultCountdown),
             loserName: '',
+            lastLoserName: null,
             drink: '',
             names: [],
             drinks: [],
@@ -335,13 +337,44 @@ class Escabio extends React.Component<{}, EscabioState> {
     /**
      * Select randomly a loser in a common (normal) round
      */
-    getLoser() {
-        let randomNameIndex = Math.floor(Math.random() * (this.state.names.length));
-        let randomDrinkIndex = Math.floor(Math.random() * (this.state.drinks.length));
+    // getLoser() {
+    //     let randomNameIndex = Math.floor(Math.random() * (this.state.names.length));
+    //     let randomDrinkIndex = Math.floor(Math.random() * (this.state.drinks.length));
         
+    //     this.setState({
+    //         countdown: this.defaultCountdown,
+    //         loserName: this.state.names[randomNameIndex],
+    //         drink: this.state.drinks[randomDrinkIndex]
+    //     });
+        
+    //     // Hides name in some seconds
+    //     setTimeout(() => {
+    //         this.setState({
+    //             loserName: '',
+    //             drink: ''
+    //         });
+    //     }, MILLISECONDS_TO_HIDE_ELEMENTS);
+    // }
+
+    /**
+     * Select randomly a loser in a common (normal) round
+     */
+    getLoser() {
+        
+        // the temporary list is created by removing the last name chosen
+        const filteredList = this.state.names.filter(name =>  name !== this.state.lastLoserName );
+
+        // if the filtered list is empty i use the original one
+        const listToDraw = filteredList.length > 0 ? filteredList : this.state.names;
+
+        let randomNameIndex = Math.floor(Math.random() * (listToDraw.length));  
+        let randomDrinkIndex = Math.floor(Math.random() * (this.state.drinks.length));
+        const actLoserName = listToDraw[randomNameIndex];
+
         this.setState({
             countdown: this.defaultCountdown,
-            loserName: this.state.names[randomNameIndex],
+            loserName: actLoserName,
+            lastLoserName: actLoserName,
             drink: this.state.drinks[randomDrinkIndex]
         });
         
@@ -353,7 +386,7 @@ class Escabio extends React.Component<{}, EscabioState> {
             });
         }, MILLISECONDS_TO_HIDE_ELEMENTS);
     }
-    
+
     /**
      * Executes a ligthning round logic
      */
@@ -480,7 +513,7 @@ class Escabio extends React.Component<{}, EscabioState> {
                 }
 
                 <Row>
-                    <Col md={12} id="div-main-content" className={`text-center ${divClass}`}>
+                    <Col md={12} id="div-main-content" className={`text-center mt-2 ${divClass}`}>
                         <h1 id="drink-label">Fondo en</h1>
                         <h1 id="timer">{this.generateCountdown()}</h1>
 
@@ -493,7 +526,7 @@ class Escabio extends React.Component<{}, EscabioState> {
                         {this.state.loserName &&
                             <h1 id="loser">
                                 {/* Victim */}
-                                <strong className="danger">{this.state.loserName}</strong> en la pera&nbsp;
+                                <strong className="danger flicker-animation">{this.state.loserName}</strong> en la pera <span style={{ fontSize: '0.3em' }}>🤜🏻🍐</span>&nbsp;        
                                 
                                 {/* Drink */}
                                 {this.state.showDrink &&
