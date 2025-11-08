@@ -524,7 +524,7 @@ class Escabio extends React.Component<{}, EscabioState> {
                         {this.state.loserName &&
                             <h1 id="loser">
                                 {/* Victim */}
-                                <strong className="danger flicker-animation">{this.state.loserName}</strong> en la pera <span style={{ fontSize: '0.3em' }}>🤜🏻🍐</span>&nbsp;        
+                                <strong className="danger flicker-animation">{this.state.loserName}</strong> en la pera <span style={{ fontSize: '0.3em', whiteSpace: 'nowrap', display: 'inline-block' }}>🤜🏻🍐</span>&nbsp;        
                                 
                                 {/* Drink */}
                                 {this.state.showDrink &&
